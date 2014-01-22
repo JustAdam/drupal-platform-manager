@@ -14,42 +14,42 @@ use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader;
 class ModuleFetch extends Application {
   //
 
-	const NAME = 'Drupal Module Fetch';
+  const NAME = 'Drupal Module Fetch';
   const VERSION = '0.1';
 
   private $pid_file = 'modulefetch.pid';
   private $base_directory;
 
-	/**
-	 * Configuration object.  Includes parser and dumper.
-	 * @see ConfigReaderInterface
-	 */
-	protected $config;
+  /**
+   * Configuration object.  Includes parser and dumper.
+   * @see ConfigReaderInterface
+   */
+  protected $config;
 
-	/**
-	 * Config data from files.
-	 */
-	protected $config_data = array();
-	/**
-	 * Current download state of all assets.
-	 */
-	protected $state_data = array();
+  /**
+   * Config data from files.
+   */
+  protected $config_data = array();
+  /**
+   * Current download state of all assets.
+   */
+  protected $state_data = array();
 
 
-	/**
-	 * Module download manager.
-	 * @see Downloader
-	 * @see ModuleDownloaderInterface
-	 */
-	protected $downloader;
+  /**
+   * Module download manager.
+   * @see Downloader
+   * @see ModuleDownloaderInterface
+   */
+  protected $downloader;
 
 
   public function __construct(ConfigInterface $config, Downloader $downloader) {
-  	// How is this going to work in practise on a multiuser (and one install) system 
-  	// with users installing into different directories ....
-  	$this->pid_file = getcwd() . '/' . $this->pid_file;
+    // How is this going to work in practise on a multiuser (and one install) system 
+    // with users installing into different directories ....
+    $this->pid_file = getcwd() . '/' . $this->pid_file;
     if (file_exists($this->pid_file)) {
-    	throw new \RuntimeException('pid file for application still exists.  Perhaps I am already running, or didn\'t shutdownn correctly last time');
+      throw new \RuntimeException('pid file for application still exists.  Perhaps I am already running, or didn\'t shutdownn correctly last time');
     }
     file_put_contents($this->pid_file, getmypid());
 
@@ -70,7 +70,7 @@ class ModuleFetch extends Application {
         || empty($directories['releases'])
         || empty($directories['downloads'])
         || empty($directories['modules']['base'])) {
-    	throw new \RuntimeException('Directory locations are not properly configured (require releases, downloada, modules->base).');
+      throw new \RuntimeException('Directory locations are not properly configured (require releases, downloada, modules->base).');
     }
 
     // Store location of base directory, so commands can move up and down the directory
@@ -79,58 +79,58 @@ class ModuleFetch extends Application {
   }
 
   public function __destruct() {
-  	// Not yet intercepting ctrl+c ...
-  	unlink($this->pid_file);
+    // Not yet intercepting ctrl+c ...
+    unlink($this->pid_file);
   }
 
   public function getConfigObj() {
-  	return $this->config;
+    return $this->config;
   }
 
   public function getDownloader($downloader) {
-  	return $this->downloader->get($downloader);
+    return $this->downloader->get($downloader);
   }
 
   public function getConfig($var) {
-  	return $this->config_data['core'][$var];
+    return $this->config_data['core'][$var];
   }
 
   public function getAssets($var) {
-  	return $this->config_data['assets'][$var];
+    return $this->config_data['assets'][$var];
   }
 
   public function getState($type, $name) {
-  	return isset($this->state_data[$type][$name]) ? $this->state_data[$type][$name] : NULL;
+    return isset($this->state_data[$type][$name]) ? $this->state_data[$type][$name] : NULL;
   }
 
   public function updateState($type, $name, array $data) {
-  	$hash = $this->genStateHash($data);
-  	$search = isset($this->state_data[$type][$name]) ? $this->state_data[$type][$name] : [];
-  	if (!$this->stateExists($hash, $search)) {
-  		$this->state_data[$type][$name][] = $hash;
-  	}
+    $hash = $this->genStateHash($data);
+    $search = isset($this->state_data[$type][$name]) ? $this->state_data[$type][$name] : [];
+    if (!$this->stateExists($hash, $search)) {
+      $this->state_data[$type][$name][] = $hash;
+    }
   }
 
   /*public function removeState($type, $name, $state) {
-  	if (isset($this->state_data[$type][$name])) {
-  		$key = $this->stateExists($state, $this->state_data[$type][$name]);
-	  	if ($key !== FALSE) {
-	  		unset($this->state_data[$type][$name][$key]);
-	  	}
-  	}
+    if (isset($this->state_data[$type][$name])) {
+      $key = $this->stateExists($state, $this->state_data[$type][$name]);
+      if ($key !== FALSE) {
+        unset($this->state_data[$type][$name][$key]);
+      }
+    }
   }
 
   public function deleteState($type, $name) {
-  	if (isset($this->state_data[$type][$name])) {
-  		unset($this->state_data[$type][$name]);
-  	}
+    if (isset($this->state_data[$type][$name])) {
+      unset($this->state_data[$type][$name]);
+    }
   }*/
 
   public function stateExists($new_state, $current_state) {
-  	if (!is_array($current_state)) {
-  		$current_state = [];
-  	}
-  	return array_search($new_state, $current_state) !== FALSE;
+    if (!is_array($current_state)) {
+      $current_state = [];
+    }
+    return array_search($new_state, $current_state) !== FALSE;
   }
 
   public function saveAssetsDownloadState() {
@@ -141,57 +141,57 @@ class ModuleFetch extends Application {
   }
 
   public function genStateHash(array $data) {
-  	$join = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($data));
-  	$str = '';
-  	foreach ($join as $key => $piece) {
-  		// Ignore keys that are not relevant to hash generation (local info)
-  		if ($key === 'subdir' || $key === 'hash') {
-  			continue;
-  		}
-  		$str .= $piece;
-  	}
-  	return sha1($str);
+    $join = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($data));
+    $str = '';
+    foreach ($join as $key => $piece) {
+      // Ignore keys that are not relevant to hash generation (local info)
+      if ($key === 'subdir' || $key === 'hash') {
+        continue;
+      }
+      $str .= $piece;
+    }
+    return sha1($str);
   }
 
-	public function getBaseDownloadDirectory() {
-		return $this->base_directory . '/' . $this->getConfig('directories')['downloads'];
-	}
+  public function getBaseDownloadDirectory() {
+    return $this->base_directory . '/' . $this->getConfig('directories')['downloads'];
+  }
 
-	public function getReleaseDirectory() {
-		return $this->base_directory . '/' . $this->getConfig('directories')['releases'];
-	}
+  public function getReleaseDirectory() {
+    return $this->base_directory . '/' . $this->getConfig('directories')['releases'];
+  }
 
-	public function getAssetDirectory($type) {
+  public function getAssetDirectory($type) {
 
-		$directories = $this->getConfig('directories');
-		if (!isset($directories[$type])) {
-			throw new \InvalidArgumentException('Asset directory for ' . $type . ' is unknown.');
-		}
+    $directories = $this->getConfig('directories');
+    if (!isset($directories[$type])) {
+      throw new \InvalidArgumentException('Asset directory for ' . $type . ' is unknown.');
+    }
 
-		$dirs = [];
-		if (!empty($directories[$type]['subdir'])) {
-			foreach ($directories[$type]['subdir'] as $name => $directory)	{
-				$dirs[$name] = $directories[$type]['base'] . '/' . $directory;
-			}
-		} else {
-			$dirs['base'] = $directories[$type]['base'];
-		}
+    $dirs = [];
+    if (!empty($directories[$type]['subdir'])) {
+      foreach ($directories[$type]['subdir'] as $name => $directory)  {
+        $dirs[$name] = $directories[$type]['base'] . '/' . $directory;
+      }
+    } else {
+      $dirs['base'] = $directories[$type]['base'];
+    }
 
-		return $dirs;
-	}
+    return $dirs;
+  }
 
-	public function getDownloadToLocation(array $data) {
-		$download_to = $this->getBaseDownloadDirectory() . '/' . "{$data['type']}-{$data['name']}-{$data['drupal_core']}";
-		if (!empty($data['version'])) {
-			$download_to .= "-{$data['version']}";
-		}
-		if (!empty($data['hash'])) {
-			$download_to .= "-{$data['hash']}";	
-		}
-		return $download_to;
-	}
+  public function getDownloadToLocation(array $data) {
+    $download_to = $this->getBaseDownloadDirectory() . '/' . "{$data['type']}-{$data['name']}-{$data['drupal_core']}";
+    if (!empty($data['version'])) {
+      $download_to .= "-{$data['version']}";
+    }
+    if (!empty($data['hash'])) {
+      $download_to .= "-{$data['hash']}"; 
+    }
+    return $download_to;
+  }
 
-	public function isInstalled() {
+  public function isInstalled() {
     $state = $this->getState('dmu_core_settings', 'save_time');
     return !empty($state);
   }
