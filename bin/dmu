@@ -1,0 +1,62 @@
+#!/usr/bin/env php
+<?php
+
+if (!file_exists(__DIR__ . '/../vendor/autoload.php')) {
+  fwrite(STDERR, 'Run composer install before using.' . PHP_EOL);
+  exit(1);
+}
+include __DIR__ . '/../vendor/autoload.php';
+
+use Dbmedialab\Drupal\Deploy\Modulefetch\ModuleFetch;
+use Dbmedialab\Drupal\Deploy\Modulefetch\InstallCommand;
+use Dbmedialab\Drupal\Deploy\Modulefetch\UpdateCommand;
+
+use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader;
+use Dbmedialab\Drupal\Deploy\Modulefetch\DrushDownloader;
+use Dbmedialab\Drupal\Deploy\Modulefetch\GitDownloader;
+use Dbmedialab\Drupal\Deploy\Modulefetch\GetDownloader;
+
+use Symfony\Component\Console\Output\ConsoleOutput;
+
+use Symfony\Component\Yaml\Parser;
+use Symfony\Component\Yaml\Dumper;
+use Dbmedialab\Config\Config;
+
+
+$container = new Pimple;
+$container['Parser'] = function ($c) {
+	return new Parser;
+};
+$container['Dumper'] = function ($c) {
+	return new Dumper;
+};
+$files = [
+	'config' => __DIR__ . '/../data/config.yml',
+	'state' =>__DIR__ . '/../data/dmu.state'
+];
+$container['config_src'] = $files;
+$container['Downloader'] = function ($c) {
+	$d = new Downloader;
+	$d->add(new DrushDownloader);
+	$d->add(new GitDownloader);
+	$d->add(new GetDownloader);
+	return $d;
+};
+$container['ModuleFetch'] = function($c) {
+	return new ModuleFetch(
+	  new Config($c['Parser'], $c['Dumper'], $c['config_src']), 
+	  $c['Downloader']
+	); 
+};
+
+
+try {
+	$app = $container['ModuleFetch'];
+	$app->add(new InstallCommand);
+	$app->add(new UpdateCommand);
+	$app->run();
+} catch (Exception $e) {
+	$output = new ConsoleOutput();
+	$output->writeln('<error>' . $e->getMessage() . '</error>');
+}
+?>

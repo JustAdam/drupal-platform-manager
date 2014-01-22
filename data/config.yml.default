@@ -1,0 +1,22 @@
+---
+core:
+  drupal_core: 7.x
+  method: drush
+  directories:
+    base: ../files
+    releases: releases
+    downloads: downloads
+    modules:
+      base: modules
+      subdir:
+        contrib: contrib
+        custom: custom
+        features: features
+    libraries:
+      base: libraries
+    themes:
+      base: themes
+assets:
+  modules:
+  libraries:
+  themes:
