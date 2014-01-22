@@ -25,38 +25,38 @@ use Dbmedialab\Config\Config;
 
 $container = new Pimple;
 $container['Parser'] = function ($c) {
-	return new Parser;
+  return new Parser;
 };
 $container['Dumper'] = function ($c) {
-	return new Dumper;
+  return new Dumper;
 };
 $files = [
-	'config' => __DIR__ . '/../data/config.yml',
-	'state' =>__DIR__ . '/../data/dmu.state'
+  'config' => __DIR__ . '/../data/config.yml',
+  'state' =>__DIR__ . '/../data/dmu.state'
 ];
 $container['config_src'] = $files;
 $container['Downloader'] = function ($c) {
-	$d = new Downloader;
-	$d->add(new DrushDownloader);
-	$d->add(new GitDownloader);
-	$d->add(new GetDownloader);
-	return $d;
+  $d = new Downloader;
+  $d->add(new DrushDownloader);
+  $d->add(new GitDownloader);
+  $d->add(new GetDownloader);
+  return $d;
 };
 $container['ModuleFetch'] = function($c) {
-	return new ModuleFetch(
-	  new Config($c['Parser'], $c['Dumper'], $c['config_src']), 
-	  $c['Downloader']
-	); 
+  return new ModuleFetch(
+    new Config($c['Parser'], $c['Dumper'], $c['config_src']), 
+    $c['Downloader']
+  ); 
 };
 
 
 try {
-	$app = $container['ModuleFetch'];
-	$app->add(new InstallCommand);
-	$app->add(new UpdateCommand);
-	$app->run();
+  $app = $container['ModuleFetch'];
+  $app->add(new InstallCommand);
+  $app->add(new UpdateCommand);
+  $app->run();
 } catch (Exception $e) {
-	$output = new ConsoleOutput();
-	$output->writeln('<error>' . $e->getMessage() . '</error>');
+  $output = new ConsoleOutput();
+  $output->writeln('<error>' . $e->getMessage() . '</error>');
 }
 ?>
