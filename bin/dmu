@@ -1,15 +1,19 @@
 #!/usr/bin/env php
 <?php
 
-if (!file_exists(__DIR__ . '/../vendor/autoload.php')) {
+// bin/ is our base directory
+chdir(__DIR__);
+
+if (!file_exists('../vendor/autoload.php')) {
   fwrite(STDERR, 'Run composer install before using.' . PHP_EOL);
   exit(1);
 }
-include __DIR__ . '/../vendor/autoload.php';
+include '../vendor/autoload.php';
 
 use Dbmedialab\Drupal\Deploy\Modulefetch\ModuleFetch;
 use Dbmedialab\Drupal\Deploy\Modulefetch\InstallCommand;
 use Dbmedialab\Drupal\Deploy\Modulefetch\UpdateCommand;
+use Dbmedialab\Drupal\Deploy\Modulefetch\CleanUpCommand;
 
 use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader;
 use Dbmedialab\Drupal\Deploy\Modulefetch\DrushDownloader;
@@ -31,8 +35,8 @@ $container['Dumper'] = function ($c) {
   return new Dumper;
 };
 $files = [
-  'config' => __DIR__ . '/../data/config.yml',
-  'state' =>__DIR__ . '/../data/dmu.state'
+  'config' => '../data/config.yml',
+  'state' => '../data/dmu.state'
 ];
 $container['config_src'] = $files;
 $container['Downloader'] = function ($c) {

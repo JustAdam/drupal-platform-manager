@@ -12,7 +12,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class UpdateCommand extends ModuleFetchCommand {
 
-  protected $asset_types = ['modules', 'libraries', 'themes'];
   protected $active_release_folder;
 
 
