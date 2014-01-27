@@ -13,6 +13,7 @@ Requirements
 ------------
 
 * PHP >= 5.5
+* composer
 * drush
 * git
 * wget
@@ -41,6 +42,11 @@ Update assets folders and then create a release
 Only create a release
 
 	$ ./dmu update --create-release
+
+Clean up releases folder and remove assets (from downloads folder) which are no longer used (determined by which symlinks exist in releases).
+_--dirs=3_ will keep the latest 3 directories in releases.  Defaults to 5.
+
+	$ ./dmu cleanup --dirs=3
 
 config.yml
 ----------

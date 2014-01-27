@@ -58,6 +58,7 @@ try {
   $app = $container['ModuleFetch'];
   $app->add(new InstallCommand);
   $app->add(new UpdateCommand);
+  $app->add(new CleanUpCommand);
   $app->run();
 } catch (Exception $e) {
   $output = new ConsoleOutput();
