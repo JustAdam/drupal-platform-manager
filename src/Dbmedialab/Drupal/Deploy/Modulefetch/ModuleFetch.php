@@ -111,20 +111,20 @@ class ModuleFetch extends Application {
     }
   }
 
-  /*public function removeState($type, $name, $state) {
+  public function removeState($type, $name, $state) {
     if (isset($this->state_data[$type][$name])) {
-      $key = $this->stateExists($state, $this->state_data[$type][$name]);
+      $key = array_search($state, $this->state_data[$type][$name]);
       if ($key !== FALSE) {
         unset($this->state_data[$type][$name][$key]);
+        if (empty($this->state_data[$type][$name])) {
+          unset($this->state_data[$type][$name]);
+        } else {
+          // Reorder keys from 0 onwards
+          $this->state_data[$type][$name] = array_values($this->state_data[$type][$name]);
+        }
       }
     }
   }
-
-  public function deleteState($type, $name) {
-    if (isset($this->state_data[$type][$name])) {
-      unset($this->state_data[$type][$name]);
-    }
-  }*/
 
   public function stateExists($new_state, $current_state) {
     if (!is_array($current_state)) {
