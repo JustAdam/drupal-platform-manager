@@ -1,0 +1,7 @@
+data/config.yml
+data/dmu.state
+files/downloads
+files/releases
+vendor/
+phpunit.xml
+composer.lock
