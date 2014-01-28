@@ -52,14 +52,14 @@ class Git implements ModuleDownloaderInterface {
 
       $this->download = $to;
 
-      if (!empty($data['revision'])) {
+      if (!empty($from['revision'])) {
         
         $cwd = new \SplStack;
         $cwd->push(getcwd());
         chdir($this->destination);
 
         // @todo error checking that this was sucessful or not.
-        $commit = escapeshellarg($data['revision']);
+        $commit = escapeshellarg($from['revision']);
         shell_exec("/usr/bin/env git reset --hard $commit");
 
         chdir($cwd->pop());
