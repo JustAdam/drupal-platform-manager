@@ -1,9 +1,9 @@
 <?php
 
-namespace Dbmedialab\Drupal\Deploy\Modulefetch;
+namespace Dbmedialab\Drupal\Deploy\Modulefetch\Downloader;
 
 
-class GitDownloader implements ModuleDownloaderInterface {
+class Git implements ModuleDownloaderInterface {
 
   protected $download = NULL;
   protected $destination;

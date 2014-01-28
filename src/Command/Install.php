@@ -1,8 +1,8 @@
 <?php
 
-namespace Dbmedialab\Drupal\Deploy\Modulefetch;
+namespace Dbmedialab\Drupal\Deploy\Modulefetch\Command;
 
-use Dbmedialab\Drupal\Deploy\Modulefetch\ModuleFetchCommand;
+use Dbmedialab\Drupal\Deploy\Modulefetch\Command\ModuleFetch;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
  
 
-class InstallCommand extends ModuleFetchCommand {
+class Install extends ModuleFetch {
   //
 
   protected function configure() {

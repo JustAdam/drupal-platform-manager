@@ -1,6 +1,6 @@
 <?php
 
-namespace Dbmedialab\Config;
+namespace Dbmedialab\Drupal\Deploy\Modulefetch\Config;
 
 interface ConfigInterface {
   /**

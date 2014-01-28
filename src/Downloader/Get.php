@@ -1,9 +1,9 @@
 <?php
 
-namespace Dbmedialab\Drupal\Deploy\Modulefetch;
+namespace Dbmedialab\Drupal\Deploy\Modulefetch\Downloader;
 
 
-class GetDownloader implements ModuleDownloaderInterface {
+class Get implements ModuleDownloaderInterface {
 
   protected $download = NULL;
   protected $destination;

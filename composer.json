@@ -15,7 +15,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Dbmedialab\\": "src/"
+      "Dbmedialab\\Drupal\\Deploy\\Modulefetch\\": "src/"
     }
   },
   "bin": [
