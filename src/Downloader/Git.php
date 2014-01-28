@@ -59,9 +59,7 @@ class Git implements ModuleDownloaderInterface {
         $cwd->push(getcwd());
         chdir($this->destination);
 
-        // @todo error checking that this was sucessful or not.
         $commit = escapeshellarg($from['revision']);
-
         $command = "/usr/bin/env git reset --hard $commit";
         $pipes = [];
 
