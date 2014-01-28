@@ -52,17 +52,38 @@ class Git implements ModuleDownloaderInterface {
 
       $this->download = $to;
 
-      if (!empty($data['revision'])) {
+      // Reset to particular revision.
+      if (!empty($from['revision'])) {
         
         $cwd = new \SplStack;
         $cwd->push(getcwd());
         chdir($this->destination);
 
         // @todo error checking that this was sucessful or not.
-        $commit = escapeshellarg($data['revision']);
-        shell_exec("/usr/bin/env git reset --hard $commit");
+        $commit = escapeshellarg($from['revision']);
 
-        chdir($cwd->pop());
+        $command = "/usr/bin/env git reset --hard $commit";
+        $pipes = [];
+
+        $cmd = proc_open($command, $descriptor, $pipes);
+        if (is_resource($cmd)) {
+          $error = stream_get_contents($pipes[2]);
+
+          foreach ($descriptor as $pipe => $d) {
+            fclose($pipes[$pipe]);
+          }
+
+          $cmd_return = proc_close($cmd);
+
+          chdir($cwd->pop());
+
+          if (strpos($error, 'fatal:') !== FALSE) {
+            shell_exec("rm -rf $this->destination");
+            return FALSE;
+          }
+        } else {
+          throw new \Exception('Failed creating git process.');
+        }
       }
 
       return TRUE;
