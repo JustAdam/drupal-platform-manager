@@ -12,4 +12,4 @@ TODO
 - General refactoring and reduction of dupe code!
 - Fix GetDownloader archive extraction to test if the archive contents are archived within a directory or not.  If they are not our directory gets messy!
 - implement patching of assets downloaded via GIT
-- Git switching to a revision requires error checking
+- Add option to use relative paths in symlinks
