@@ -1,10 +1,10 @@
 <phpunit colors="true">
   <testsuites>
-    <testsuite name="drupal-module-update">
-      <directory suffix="Test.php" phpVersion="5.5" phpVersionOperator=">=">tests/Drupal/Deploy/Modulefetch/</directory>
-      <file>DrushDownloaderTest.php</file>
-      <file>GetDownloaderTest.php</file>
-      <file>DownloaderTest.php</file>
+    <testsuite name="drupal-module-update-downloaders">
+      <directory suffix="Test.php" phpVersion="5.5" phpVersionOperator=">=">tests/Downloader/</directory>
+      <file>DrushTest.php</file>
+      <file>GetTest.php</file>
+      <file>GitTest.php</file>
     </testsuite>
   </testsuites>
 </phpunit>
