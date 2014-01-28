@@ -1,10 +1,10 @@
 <?php
 
-namespace Dbmedialab\Drupal\Deploy\Modulefetch;
+namespace Dbmedialab\Drupal\Deploy\Modulefetch\Command;
 
 use Symfony\Component\Console\Command\Command;
 
-abstract class ModuleFetchCommand extends Command {
+abstract class ModuleFetch extends Command {
 
   protected $asset_types = ['modules', 'libraries', 'themes'];
   

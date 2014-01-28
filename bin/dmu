@@ -11,20 +11,20 @@ if (!file_exists('../vendor/autoload.php')) {
 include '../vendor/autoload.php';
 
 use Dbmedialab\Drupal\Deploy\Modulefetch\ModuleFetch;
-use Dbmedialab\Drupal\Deploy\Modulefetch\InstallCommand;
-use Dbmedialab\Drupal\Deploy\Modulefetch\UpdateCommand;
-use Dbmedialab\Drupal\Deploy\Modulefetch\CleanUpCommand;
+use Dbmedialab\Drupal\Deploy\Modulefetch\Command\Install as InstallCommand;
+use Dbmedialab\Drupal\Deploy\Modulefetch\Command\Update as UpdateCommand;
+use Dbmedialab\Drupal\Deploy\Modulefetch\Command\CleanUp as CleanUpCommand;
 
-use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader;
-use Dbmedialab\Drupal\Deploy\Modulefetch\DrushDownloader;
-use Dbmedialab\Drupal\Deploy\Modulefetch\GitDownloader;
-use Dbmedialab\Drupal\Deploy\Modulefetch\GetDownloader;
+use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader\Downloader;
+use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader\Drush as DrushDownloader;
+use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader\Git as GitDownloader;
+use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader\Get as GetDownloader;
 
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Dumper;
-use Dbmedialab\Config\Config;
+use Dbmedialab\Drupal\Deploy\Modulefetch\Config\Config;
 
 
 $container = new Pimple;

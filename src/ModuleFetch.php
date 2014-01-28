@@ -7,8 +7,8 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Dbmedialab\Config\ConfigInterface;
-use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader;
+use Dbmedialab\Drupal\Deploy\Modulefetch\Config\ConfigInterface;
+use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader\Downloader;
 
 
 class ModuleFetch extends Application {

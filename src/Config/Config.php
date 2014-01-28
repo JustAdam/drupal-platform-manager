@@ -1,6 +1,6 @@
 <?php
 
-namespace Dbmedialab\Config;
+namespace Dbmedialab\Drupal\Deploy\Modulefetch\Config;
 
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Dumper;

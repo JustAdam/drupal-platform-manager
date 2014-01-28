@@ -1,6 +1,6 @@
 <?php
 
-namespace Dbmedialab\Drupal\Deploy\Modulefetch;
+namespace Dbmedialab\Drupal\Deploy\Modulefetch\Downloader;
 
 interface ModuleDownloaderInterface {
   /**

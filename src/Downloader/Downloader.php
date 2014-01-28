@@ -1,8 +1,8 @@
 <?php
 
-namespace Dbmedialab\Drupal\Deploy\Modulefetch;
+namespace Dbmedialab\Drupal\Deploy\Modulefetch\Downloader;
 
-use Dbmedialab\Drupal\Deploy\Modulefetch\ModuleDownloaderInterface;
+use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader\ModuleDownloaderInterface;
  
 
 class Downloader {
