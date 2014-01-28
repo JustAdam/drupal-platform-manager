@@ -137,8 +137,14 @@ class CleanUp extends ModuleFetch {
         $rmdir($base_download_dir . '/' .$dir);
 
         $parts = explode('-', $dir);
-        $assets[] = $parts[1] . '-' . $parts[2] . '-' . $parts[3];
-        $this->removeState($parts[0], $parts[1], $parts[4]);
+        if (count($parts) == 5) {
+          $assets[] = $parts[1] . '-' . $parts[2] . '-' . $parts[3];
+        } else {
+          $assets[] = $parts[1] . '-' . $parts[2];
+        }
+
+        $hash = array_pop($parts);
+        $this->removeState($parts[0], $parts[1], $hash);
       }
 
       $this->saveAssetsDownloadState();
