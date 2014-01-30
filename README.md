@@ -7,12 +7,13 @@ Features
 --------
 
 * Yaml configuration file
-* Downloads only assets that have changed - FAST
+* Asset distributions (multisite configuration for different asset combinations)
+* Downloads only assets that have changed
 
 Requirements
 ------------
 
-* PHP >= 5.5
+* PHP >= 5.4
 * composer
 * drush
 * git
@@ -27,19 +28,24 @@ Installation quick start
 
 	$ vim data/config.yml
 
+	$ cp data/distribution.yml.default data/distribution-name.yml
+	(update config.yml:distribution_info)
+
+	$ vim data/distribution-name.yml
+
 	$ touch data/dmu.state
 
 	$ cd bin
 
 	$ ./dmu install
 
-Later
+**Later**
 
 Update assets folders and then create a release
 
 	$ ./dmu update
 
-Only create a release
+Create a release only
 
 	$ ./dmu update --create-release
 
@@ -62,19 +68,24 @@ config.yml
 			subdir: list of subdirectories to use
 		libraries: libraries
 		themes: themes
+	distribution_info:
+		distribution-name: Location to distribution asset configuration file. (deleting an existing will remove it from the releases directory after running cleanup)
 
-	assets:
-		asset_type:  modules, libraries or themes
-			asset_name: 
-				method: Download method, defaults to drush if not specified (drush, git or get)
-				drupal_core: Drupal core version to use, defaults to value in config.yml if not specified
-				version: Version of asset to get, required by drush method
-				patches:
-					- list of patches by URL
-				revision: used by git, defaults to HEAD (recommended to not use HEAD - see Warnings)
-				url: URL of asset, required by git, get
+distribution-name.yml
+---------------------
 
-Example:
+assets:
+	asset_type:  modules, libraries or themes
+		asset_name: 
+			method: Download method, defaults to drush if not specified (drush, git or get)
+			drupal_core: Drupal core version to use, defaults to value in config.yml if not specified
+			version: Version of asset to get, required by drush method
+			patches:
+				- list of patches by URL
+			revision: used by git, defaults to HEAD (recommended to not use HEAD - see Warnings)
+			url: URL of asset, required by git, get
+
+**Example:**
 
 	assets:
 	  modules:
@@ -99,6 +110,9 @@ Example:
 	    adaptivetheme:
 	      version: 3.1
 
+All distributions will be built from the shared assets downloads folder, so an asset will only need to be downloaded once and it is available to all distributions.  Each distribution can run a difference version of a module, or the same version; one with a patch and one without.
+
+Distributions are stored in the releases folder, release/distribution-name/timestamp.  A symlink called latest will point to the latest version.
 
 Downloading an asset will create a unique directory based on the options passed to the download.
 This means an asset will have a different instance available for each time update is run and it has a different configuration.
@@ -106,6 +120,8 @@ Thus there will be multiple directories for the same asset each time:
 - the version number increments (or decrements)
 - a patch is added (or removed)
 - download method is changed
+
+Assets which are no longer in use can be removed with the cleanup command.  Assets are marked for deletion when they are no longer referenced by any symlink within the releases folder (thus they must also be removed from the configuration file first).
 
 
 WARNINGS

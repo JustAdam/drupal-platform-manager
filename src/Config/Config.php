@@ -19,11 +19,14 @@ class Config implements ConfigInterface {
   protected $data = array();
 
 
-  public function __construct(Parser $parser, Dumper $dumper, array $data) {
+  public function __construct(Parser $parser, Dumper $dumper) {
 
     $this->parser = $parser;
     $this->dumper = $dumper;
-    $this->data = $data;
+  }
+
+  public function addDataSource($name, $file_location) {
+    $this->data[$name] = $file_location;
   }
 
   public function load($file) {

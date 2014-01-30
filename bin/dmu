@@ -39,6 +39,13 @@ $files = [
   'state' => '../data/dmu.state'
 ];
 $container['config_src'] = $files;
+$container['Config'] = function ($c) {
+  $config = new Config($c['Parser'], $c['Dumper']);
+  foreach ($c['config_src'] as $n => $f) {
+    $config->addDataSource($n, $f);
+  }
+  return $config;
+};
 $container['Downloader'] = function ($c) {
   $d = new Downloader;
   $d->add(new DrushDownloader);
@@ -48,7 +55,7 @@ $container['Downloader'] = function ($c) {
 };
 $container['ModuleFetch'] = function($c) {
   return new ModuleFetch(
-    new Config($c['Parser'], $c['Dumper'], $c['config_src']), 
+    $c['Config'],
     $c['Downloader']
   ); 
 };

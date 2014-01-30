@@ -1,4 +1,4 @@
-data/config.yml
+data/*.yml
 data/dmu.state
 files/downloads
 files/releases
