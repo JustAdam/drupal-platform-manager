@@ -16,7 +16,5 @@ core:
       base: libraries
     themes:
       base: themes
-assets:
-  modules:
-  libraries:
-  themes:
+  distribution_info:
+    default: ../data/distribution.yml.default

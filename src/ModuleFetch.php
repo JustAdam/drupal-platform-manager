@@ -15,7 +15,7 @@ class ModuleFetch extends Application {
   //
 
   const NAME = 'Drupal Module Fetch';
-  const VERSION = '0.1';
+  const VERSION = '0.2';
 
   private $pid_file = 'modulefetch.pid';
   private $base_directory;
@@ -27,13 +27,18 @@ class ModuleFetch extends Application {
   protected $config;
 
   /**
-   * Config data from files.
+   * Core app configuration data.
    */
-  protected $config_data = array();
+  protected $config_data = [];
+
+  /**
+   * Asset distribution data (all distributions)
+   */
+  protected $asset_data = [];
   /**
    * Current download state of all assets.
    */
-  protected $state_data = array();
+  protected $state_data = [];
 
 
   /**
@@ -76,11 +81,29 @@ class ModuleFetch extends Application {
     // Store location of base directory, so commands can move up and down the directory
     // structure without breaking core path name getters.
     $this->base_directory = realpath($directories['base']);
+
+    // Load asset info
+    $asset_info = $this->getConfig('distribution_info');
+    if (empty($asset_info)) {
+      throw new \RuntimeException('No distribution information found.');
+    }
+
+    // Load information for each asset distribution
+    foreach ($asset_info as $name => $file) {
+      $this->config->addDataSource($name, $file);
+      $asset = $this->config->load($name);
+      // Remove 'assets' key
+      $this->asset_data[$name] = array_pop($asset);
+    }
   }
 
   public function __destruct() {
     // Not yet intercepting ctrl+c ...
     unlink($this->pid_file);
+  }
+
+  public function getDistributions() {
+    return array_keys($this->asset_data);
   }
 
   public function getConfigObj() {
@@ -95,8 +118,8 @@ class ModuleFetch extends Application {
     return $this->config_data['core'][$var];
   }
 
-  public function getAssets($var) {
-    return $this->config_data['assets'][$var];
+  public function getAssets($type, $distribution) {
+    return $this->asset_data[$distribution][$type];
   }
 
   public function getState($type, $name) {

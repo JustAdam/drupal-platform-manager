@@ -44,31 +44,6 @@ class CleanUp extends ModuleFetch {
 
   protected function cleanup(OutputInterface $output) {
 
-    $release_folder = $this->getReleaseDirectory();
-
-    // List of directories in releases folder
-    $directories = new \SplPriorityQueue;
-    $d_it = new \DirectoryIterator($release_folder);
-    foreach ($d_it as $file) {
-      if ($file->isDot() || !$file->isDir() || $file->isLink()) {
-        continue;
-      }
-
-      // Store directories keeping the last modified at the top.
-      $directories->insert($file->getPathname(), $file->getCTime());
-    }
-
-    // No further action is required.
-    if ($directories->count() <= $this->dirs) {
-      return FALSE;
-    }
-
-    // Directories we want to keep
-    $dir_keep = [];
-    for ($i = 0; $i < $this->dirs; $i++) {
-      $dir_keep[] = $directories->extract();
-    }
-
     // Recursive directory iterator
     $dir_it = function ($dir) {
       return new \RecursiveIteratorIterator(
@@ -91,14 +66,64 @@ class CleanUp extends ModuleFetch {
       rmdir($dir);
     };
 
-    // Delete all the other release directories
-    $directories->top();
-    while ($directories->valid()) {
-      $dir = $directories->current();
-      $rmdir($dir);
-      
-      $directories->next();
+
+    $further_cleanup_required = FALSE;
+    $release_folder = $this->getReleaseDirectory();    
+    $distributions = array_keys($this->getConfig('distribution_info'));
+
+    // First, release directory cleanup
+    foreach (new \DirectoryIterator($release_folder) as $file) {
+      if ($file->isDot() || !$file->isDir() || $file->isLink()) {
+        continue;
+      }
+
+      // Remove distributions which no longer exist (have been removed from the config file).
+      if (!in_array($file->getBasename(), $distributions)) {
+        $rmdir($file->getPathname());
+
+        $further_cleanup_required = TRUE;
+      } else {
+
+        // Clean up timestamped release directories within each distribution.
+        // The number to keep is specified by --dirs
+        $directories = new \SplPriorityQueue;
+        foreach (new \DirectoryIterator($file->getPathname()) as $dir) {
+          if ($dir->isDot() || !$dir->isDir() || $dir->isLink()) {
+            continue;
+          }
+
+          // Store directories keeping the last modified at the top.
+          $directories->insert($dir->getPathname(), $dir->getCTime());  
+        }
+
+        // No further action is required for this directory.
+        if ($directories->count() <= $this->dirs) {
+          continue;
+        }
+
+        $further_cleanup_required = TRUE;
+        
+        // Timestamped release directories we want to keep
+        for ($i = 0; $i < $this->dirs; $i++) {
+          $directories->extract();
+        }
+
+        // Delete all the others
+        $directories->top();
+        while ($directories->valid()) {
+          $dir = $directories->current();
+          $rmdir($dir);
+          $directories->next();
+        }
+      }
     }
+
+    // No release directories were removed so no need to do any further cleanup.
+    // (all other assets should be in use)
+    if (FALSE == $further_cleanup_required) {
+      return FALSE;
+    }
+
 
     // Get a list of all assets that are in use (in use counts as being linked to
     // from a releases directory).
@@ -106,17 +131,14 @@ class CleanUp extends ModuleFetch {
       $active_symlinks = [];
       foreach ($dir_it($dir) as $file) {
         // Ignore latest folder symlink
-        if (empty($found) && $file->getBasename() == 'latest') {
-          $found = TRUE;
-        } else {
-          if ($file->isLink()) {
-            $active_symlinks[] = basename($file->getRealPath());
-          }  
+        if ($file->getBasename() != 'latest' && $file->isLink()) {
+          $active_symlinks[] = basename($file->getRealPath());
         }
       }
-      return $active_symlinks;
+      return array_unique($active_symlinks);
     };
 
+    // Find all assets that are in use
     $active_symlinks = $find_symlinks($release_folder);
 
     // Get a list of all assets that are downloaded
@@ -129,7 +151,7 @@ class CleanUp extends ModuleFetch {
       }
     }
 
-    // Calculate which asset folders need to be removed.
+    // Calculate which asset folders need to be removed from the downloads directory.
     $to_delete = array_diff($downloads, $active_symlinks);
     if (!empty($to_delete)) {
       $assets = [];

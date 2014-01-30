@@ -20,18 +20,36 @@ class Update extends ModuleFetch {
     $this
       ->setName('update')
       ->setDescription('Update modules (according to latest changes)')
-      ->addOption('create-release', NULL, InputOption::VALUE_NONE, 'Create a new release only'); 
+      ->addArgument('distributions', InputArgument::IS_ARRAY, 'Distribution(s) to use.')
+      ->addOption('create-release', NULL, InputOption::VALUE_NONE, 'Create a new release only');
       // --rebuild-asset=name
   }
 
   // @todo check if installed or not (- can't update without being installed)
   protected function execute(InputInterface $input, OutputInterface $output) {
 
-    if ($input->getOption('create-release')) {
-      $this->createRelease($output);
+    if ($distributions = $input->getArgument('distributions')) {
+      $loaded = $this->getDistributions();
+      foreach ($distributions as $distribution) {
+        if (!in_array($distribution, $loaded)) {
+          throw new \InvalidArgumentException("Supplied argument is not a valid distribution.");
+        }
+      }
+      unset($loaded);
+      unset($distribution);
     } else {
-      if ($this->updateAssets($output)) {
-        $this->createRelease($output);
+      $distributions = $this->getDistributions();
+    }
+
+    $create_release_only = $input->getOption('create-release');
+    foreach ($distributions as $distribution) {
+      if ($create_release_only) {
+        $this->createRelease($output, $distribution);
+        //exit;
+      } else {
+        if ($this->updateAssets($output, $distribution)) {
+          $this->createRelease($output, $distribution);
+        }
       }
     }
   }
@@ -59,18 +77,23 @@ class Update extends ModuleFetch {
     return $data;
   }
 
-  // @todo add support for having multiple versions of a module
-  protected function updateAssets(OutputInterface $output) {
+  /**
+   * @param OutputInterface
+   * @param string Distribution name
+   */
+  protected function updateAssets(OutputInterface $output, $distribution) {
     //
     $saved = FALSE;
 
     $progress = $this->getHelperSet()->get('progress');
 
+    $output->writeln("<comment>Updating distribution <info>$distribution</info></comment>");
+
     foreach ($this->asset_types as $type) {
-      $assets = $this->getAssets($type);
+      $assets = $this->getAssets($type, $distribution);
 
       if (empty($assets)) {
-        $output->writeln("<comment>Skipping $type as it contains 0 assets</comment>");
+        $output->writeln("  <comment>Skipping <info>$type</info> as it contains 0 assets</comment>");
         continue;
       }
 
@@ -92,13 +115,13 @@ class Update extends ModuleFetch {
         // Required value checks for particular download methods
         // @todo move logic to the relevant downloader class. (->hasRequiredValues($from))
         if ($data['method'] == 'drush' && empty($data['version'])) {
-          $output->writeln("<error>$type: $name is missing required version</error>");
+          $output->writeln("  <error>$type: $name is missing required version</error>");
           continue;
         } elseif ($data['method'] == 'git' && empty($data['url'])) {
-          $output->writeln("<error>$type: $name is missing required url</error>");
+          $output->writeln("  <error>$type: $name is missing required url</error>");
           continue;
         } elseif ($data['method'] == 'get' && empty($data['url'])) {
-          $output->writeln("<error>$type: $name is missing required url</error>");
+          $output->writeln("  <error>$type: $name is missing required url</error>");
           continue;
         }
    
@@ -118,11 +141,11 @@ class Update extends ModuleFetch {
       }
 
       if (empty($to_download)) {
-        $output->writeln("<comment>No $type require updating</comment>");
+        $output->writeln("  <comment>No <info>$type</info> require updating</comment>");
         continue;
       }
 
-      $output->writeln("<options=bold>Downloading $type</options=bold>");
+      $output->writeln("  <options=bold>Downloading $type</options=bold>");
 
       $progress->start($output, count($to_download));
       $progress->display();
@@ -149,7 +172,7 @@ class Update extends ModuleFetch {
       $progress->finish();
 
       if (!empty($errors)) {
-        $output->writeln("<error>Failed downloading the following $type: " . join(', ', $errors) . '</error>');
+        $output->writeln("  <error>Failed downloading the following $type: " . join(', ', $errors) . '</error>');
       }
     }
 
@@ -162,14 +185,22 @@ class Update extends ModuleFetch {
     return empty($errors) && TRUE === $saved;
   }
 
-  protected function createRelease(OutputInterface $output) {
+  protected function createRelease(OutputInterface $output, $distribution) {
 
-    $output->writeln('<options=bold>Creating release</options=bold>');
+    $output->writeln("<options=bold>Creating release for <info>$distribution</info></options=bold>");
 
     $cwd = new \Splstack();
     $release_dir = $this->getReleaseDirectory();
     $cwd->push(getcwd());
     chdir($release_dir);
+
+    // Create distribution folder if it does not yet exist
+    if (!file_exists($distribution)) {
+      mkdir($distribution);
+    }
+    $cwd->push(getcwd());
+    chdir($distribution);
+    $release_dir .= '/' . $distribution;
 
     // Timestamped folder name for this release
     $dir = (string) microtime(TRUE); //date('YmdGis');
@@ -203,9 +234,9 @@ class Update extends ModuleFetch {
       // Set up directories for this asset.
       $asset_setup($directories[$type]);
       // 
-      $assets = $this->getAssets($type);
+      $assets = $this->getAssets($type, $distribution);
       if (empty($assets)) {
-        $output->writeln("<comment>Skipping $type as it is empty</comment>");
+        $output->writeln("  <comment>Skipping $type as it is empty</comment>");
         continue;
       }
 
@@ -241,7 +272,7 @@ class Update extends ModuleFetch {
       }
 
       if (!empty($errors)) {
-        $output->writeln("<error>The following $type were not included in the release: " . join(', ', $errors) . '</error>');
+        $output->writeln("  <error>The following $type were not included in the release: " . join(', ', $errors) . '</error>');
       }
     }
 
@@ -251,7 +282,7 @@ class Update extends ModuleFetch {
     }
     symlink($this->active_release_folder, $release_dir  . '/latest');
 
-    $output->writeln(" at: <comment>$this->active_release_folder</comment>");
+    $output->writeln("  at: <comment>$this->active_release_folder</comment>");
 
     chdir($cwd->bottom());
   }
