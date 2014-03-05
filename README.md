@@ -45,9 +45,17 @@ Update assets folders and then create a release
 
 	$ ./dmu update
 
+Update only this distrubution
+
+	$ ./dmu update distribution-name
+
 Create a release only
 
 	$ ./dmu update --create-release
+
+Create a release only for this distribution
+
+	$ ./dmu update distribution-name --create-release
 
 Clean up releases folder and remove assets (from downloads folder) which are no longer used (determined by which symlinks exist in releases).
 _--dirs=3_ will keep the latest 3 directories in releases.  Defaults to 5.
@@ -57,7 +65,6 @@ _--dirs=3_ will keep the latest 3 directories in releases.  Defaults to 5.
 config.yml
 ----------
 
-	drupal_core: Default version of Drupal being used
 	method: Default downloader method to use (drush, git, get)
 		directories: Core app directories and asset mapping
 		base: Base directory for all files
@@ -69,11 +76,18 @@ config.yml
 		libraries: libraries
 		themes: themes
 	distribution_info:
-		distribution-name: Location to distribution asset configuration file. (deleting an existing will remove it from the releases directory after running cleanup)
+		distribution-name:  Name of a distribution you have created
+			buildfile: Location to distribution asset configuration file. (deleting an existing will remove it from the releases directory after running cleanup)
+			overrides: List of files to link to in sites/all that are found outside of a Drupal build
+				sites.php: Location to your sites.php file
+				settings.php: Location to your settings.php file
 
 distribution-name.yml
 ---------------------
-
+core:
+	version: Version of Drupal to use
+	patches:
+		- list of patches by URL
 assets:
 	asset_type:  modules, libraries or themes
 		asset_name: 

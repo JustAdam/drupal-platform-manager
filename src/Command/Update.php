@@ -14,6 +14,7 @@ class Update extends ModuleFetch {
 
   protected $active_release_folder;
 
+  protected $distribution_core;
 
   //
   protected function configure() {
@@ -43,9 +44,12 @@ class Update extends ModuleFetch {
 
     $create_release_only = $input->getOption('create-release');
     foreach ($distributions as $distribution) {
+
+      // Set the Drupal core version being used by this distribution
+      $this->distribution_core = $this->getAssets('info', $distribution)['main_version'];
+
       if ($create_release_only) {
         $this->createRelease($output, $distribution);
-        //exit;
       } else {
         if ($this->updateAssets($output, $distribution)) {
           $this->createRelease($output, $distribution);
@@ -59,8 +63,9 @@ class Update extends ModuleFetch {
    */
   private function updateAssetDefaultData($type, $name, $data) {
     $data['name'] = $name;
+    // If no core is specified then we default to that specified in the core config.yml
     if (empty($data['drupal_core'])) {
-      $data['drupal_core'] = $this->getConfig('drupal_core');  
+      $data['drupal_core'] = $this->distribution_core;
     }
     $data['type'] = $type;
     if (empty($data['method'])) {
@@ -83,11 +88,11 @@ class Update extends ModuleFetch {
    */
   protected function updateAssets(OutputInterface $output, $distribution) {
     //
-    $saved = FALSE;
+    $output->writeln("<comment>Updating distribution <info>$distribution</info></comment>");
 
+    $saved = FALSE;
     $progress = $this->getHelperSet()->get('progress');
 
-    $output->writeln("<comment>Updating distribution <info>$distribution</info></comment>");
 
     foreach ($this->asset_types as $type) {
       $assets = $this->getAssets($type, $distribution);
@@ -96,6 +101,7 @@ class Update extends ModuleFetch {
         $output->writeln("  <comment>Skipping <info>$type</info> as it contains 0 assets</comment>");
         continue;
       }
+
 
       // Figure out what needs to be downloaded.
       //
@@ -189,6 +195,7 @@ class Update extends ModuleFetch {
 
     $output->writeln("<options=bold>Creating release for <info>$distribution</info></options=bold>");
 
+
     $cwd = new \Splstack();
     $release_dir = $this->getReleaseDirectory();
     $cwd->push(getcwd());
@@ -211,6 +218,43 @@ class Update extends ModuleFetch {
     $this->active_release_folder = getcwd();
 
 
+    // Get Distribution build info
+    $d_b_info = $this->getAssets('info', $distribution);
+
+    // Build core drupal site.
+    $assets = $this->getAssets('core', $distribution);
+    $data = $this->updateAssetDefaultData('core', 'drupal', $assets['drupal']);
+    $data['hash'] = $this->genStateHash($data);
+
+    $core_folder = $this->getDownloadToLocation($data);
+
+    foreach (new \DirectoryIterator($core_folder) as $file) {
+      if ($file->isDot()) {
+        continue;
+      }
+
+      symlink($file->getPathname(), $file->getFilename());
+    }
+
+    // Recreate sites directory local to this build.
+    unlink('sites');
+
+    mkdir('sites');
+    $cwd->push(getcwd());
+    chdir('sites');
+
+    // Link to override files (these we usually be Drupal files which are kept outside of core and in another repo)
+    if (!empty($d_b_info['overrides'])) {
+      foreach ($d_b_info['overrides'] as $link => $file) {
+        symlink($file, $link);
+      }  
+    }
+
+    mkdir('all');
+    $cwd->push(getcwd());
+    chdir('all');
+
+
     $asset_setup = function($asset) use (&$cwd) {
       //
       mkdir($asset['base']);
@@ -227,10 +271,12 @@ class Update extends ModuleFetch {
       }
     };
 
-
+    // Create all asset directories (within sites/all)
     $directories = $this->getConfig('directories');
-
     foreach ($this->asset_types as $type) {
+      if ('core' == $type) {
+        continue;
+      }
       // Set up directories for this asset.
       $asset_setup($directories[$type]);
       // 
@@ -261,7 +307,7 @@ class Update extends ModuleFetch {
             throw new \RuntimeException("Asset $name specifies directory of $directory but it is not defined.");
           }
 
-          $link = $this->active_release_folder . '/' . $asset_dirs[$directory] . '/' . $name;
+          $link = $asset_dirs[$directory] . '/' . $name;
           if (!symlink($asset_folder, $link)) {
             throw new \Exception("Failed creating symlink for $name ($asset_folder to $link)");
           }

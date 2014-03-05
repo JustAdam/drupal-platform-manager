@@ -1,6 +1,5 @@
 ---
 core:
-  drupal_core: 7.x
   method: drush
   directories:
     base: ../files
@@ -17,4 +16,7 @@ core:
     themes:
       base: themes
   distribution_info:
-    default: ../data/distribution.yml.default
+    default: 
+      buildfile: ../data/distribution.yml.default
+      overrides:
+        sites.php: ../../../../../../data/sites.php

@@ -1,7 +1,9 @@
 TODO
 ----
 
+- Add site building
 - Global: Write unit tests
+- Make use Travis
 - Global: Core config options other than directories should be alterable via command line switches
 - Update: add --rebuild-asset=asset option to force redownloading of asset
 - Global: Wrap use of cwd SplStack into an directory moving wrapper
@@ -12,5 +14,4 @@ TODO
 - Downloader: implement patching of assets downloaded via GIT
 - Update: Add option to use relative paths in symlinks
 - Update/Application: Move $asset_types variable up into the Application (getAssetTypes())
-- Update: Add support for downloading Drupal core
 - Install: add option to support rebuilding (and cleaning up) of directory structure after changes in config.yml
