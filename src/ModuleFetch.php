@@ -89,11 +89,24 @@ class ModuleFetch extends Application {
     }
 
     // Load information for each asset distribution
-    foreach ($asset_info as $name => $file) {
-      $this->config->addDataSource($name, $file);
+    foreach ($asset_info as $name => $info) {
+      if (empty($info['buildfile'])) {
+        throw new \RuntimeException("Distribution $name is missing buildfile info");
+      }
+
+      $this->config->addDataSource($name, $info['buildfile']);
       $asset = $this->config->load($name);
-      // Remove 'assets' key
-      $this->asset_data[$name] = array_pop($asset);
+
+      $assets = $asset['assets'];
+      if (!empty($asset['core']['version'])) {
+        // Set main core version number (7.x).  Required for drush downloads
+        $info['main_version'] = preg_replace("!(\d{1,3})$!", 'x', $asset['core']['version']);
+        $assets['core']['drupal'] = $asset['core'];  
+      } else {
+        throw new \RuntimeException("core settings are missing from distribution $name");
+      }
+      $this->asset_data[$name] = $assets;
+      $this->asset_data[$name]['info'] = $info;
     }
   }
 

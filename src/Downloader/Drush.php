@@ -7,8 +7,15 @@ class Drush implements ModuleDownloaderInterface {
   //
   protected $download = NULL;
 
-  protected $destination;
-  protected $asset_name;
+
+  /**
+   * Base directory which Drush will download in too.
+   */
+  protected $base_destination_dir;
+  /**
+   * Name of the directory that Drush will download the asset into
+   */
+  protected $asset_name_dir;
 
 
   public function getName() {
@@ -16,7 +23,6 @@ class Drush implements ModuleDownloaderInterface {
   }
 
   public function get($from, $to) {
-
     //
     // Drush names the download directory as the module name, whereas we need to download it into
     // the directory name specified by $to.
@@ -27,22 +33,26 @@ class Drush implements ModuleDownloaderInterface {
       return NULL;
     }
 
-    $this->asset_name = $from['name'];
+    // Core downloads require a version number
+    if ('drupal' == $from['name']) {
+      $this->asset_name_dir = 'drupal-' . $from['version'];
+    } else {
+      $this->asset_name_dir = $from['name'];
+    }
 
     // Argument drush expects to download the module
-    $dl_module = "{$this->asset_name}-{$from['drupal_core']}-{$from['version']}";
+    $dl_module = "{$from['name']}-{$from['drupal_core']}-{$from['version']}";
 
     // Get the base directory for drush to download into
-    $this->destination = dirname($to);
+    $this->base_destination_dir = dirname($to);
 
     $s_module = escapeshellarg($dl_module);
-    $s_to = escapeshellarg($this->destination);
+    $s_to = escapeshellarg($this->base_destination_dir);
 
     $command = "/usr/bin/env drush dl $s_module --destination=$s_to --no";
     
     $descriptor = [
-      //0 => array("pipe", "r"),
-      1 => ["pipe", "w"], // Ignore STDOUT
+      1 => ["pipe", "w"],
       2 => ["pipe", "w"]
     ];
     $pipes = [];
@@ -69,7 +79,7 @@ class Drush implements ModuleDownloaderInterface {
           }
 
           // Rename directory from that drush uses to what was asked for.
-          rename($this->destination . '/' . $this->asset_name, $to);
+          rename($this->base_destination_dir . '/' . $this->asset_name_dir, $to);
 
           return TRUE;
         break;
@@ -82,7 +92,7 @@ class Drush implements ModuleDownloaderInterface {
 
   // @todo refactoring and strategy abstraction
   public function applyPatches(array $patches) {
-    $dl_to = $this->destination . '/' . $this->asset_name;
+    $dl_to = $this->base_destination_dir . '/' . $this->asset_name_dir;
 
     $context = stream_context_create(['http' => ['method' => 'GET', "user_agent" => 'drush']]);
 

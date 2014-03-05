@@ -6,7 +6,7 @@ use Symfony\Component\Console\Command\Command;
 
 abstract class ModuleFetch extends Command {
 
-  protected $asset_types = ['modules', 'libraries', 'themes'];
+  protected $asset_types = ['core', 'modules', 'libraries', 'themes'];
   
 
   public function __call($name, $args) {

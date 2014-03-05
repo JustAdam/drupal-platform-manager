@@ -1,3 +1,5 @@
+core:
+  version:
 assets:
   modules:
   libraries:
