@@ -1,0 +1,5 @@
+--- 
+site-name.com:
+  distribution: distribution
+  source: /www/sites/site-name.com/site-name.com/
+  document_root: /www/sites/site-name.com/root

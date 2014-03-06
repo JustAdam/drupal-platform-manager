@@ -250,6 +250,11 @@ class Update extends ModuleFetch {
       }  
     }
 
+    // Add sites which are using this distro.
+    foreach ($d_b_info['site_building'] as $site => $info) {
+      symlink($info['source'], $site);
+    }
+
     mkdir('all');
     $cwd->push(getcwd());
     chdir('all');
