@@ -329,9 +329,11 @@ class Update extends ModuleFetch {
 
     // Symlink to latest release folder
     if (file_exists($release_dir  . '/latest')) {
-      unlink($release_dir  . '/latest');
+      $cmd = "rm \"$release_dir/latest\" && ln -s \"$this->active_release_folder\" \"$release_dir/latest\"";
+      shell_exec($cmd);
+    } else {
+      symlink($this->active_release_folder, $release_dir  . '/latest');  
     }
-    symlink($this->active_release_folder, $release_dir  . '/latest');
 
     $output->writeln("  at: <comment>$this->active_release_folder</comment>");
 
