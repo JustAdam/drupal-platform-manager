@@ -1,5 +1,5 @@
-drupal-module-update
-====================
+drupal-platform-manager
+=======================
 
 Drupal core and asset (modules/themes/libraries) manager and release builder.
 
@@ -37,34 +37,34 @@ Installation quick start
 
 	$ vim sites.yml
 
-	$ touch data/dmu.state
+	$ touch data/dpm.state
 
 	$ cd bin
 
-	$ ./dmu install
+	$ ./dpm install
 
 **Later**
 
 Update assets folders and then create a release
 
-	$ ./dmu update
+	$ ./dpm update
 
 Update only this distrubution
 
-	$ ./dmu update distribution-name
+	$ ./dpm update distribution-name
 
 Create a release only
 
-	$ ./dmu update --create-release
+	$ ./dpm update --create-release
 
 Create a release only for this distribution
 
-	$ ./dmu update distribution-name --create-release
+	$ ./dpm update distribution-name --create-release
 
 Clean up releases folder and remove assets (from downloads folder) which are no longer used (determined by which symlinks exist in releases).
 _--dirs=3_ will keep the latest 3 directories in releases.  Defaults to 5.
 
-	$ ./dmu cleanup --dirs=3
+	$ ./dpm cleanup --dirs=3
 
 config.yml
 ----------
@@ -133,7 +133,7 @@ sites.yml
 
 site-name.com: Domain name for the site
   distribution: Distribution this site will be build into
-  source: Location to the source files for the site itself (this will be outside of the dmu and in a seperate repository)
+  source: Location to the source files for the site itself (this will be outside of the dpm and in a seperate repository)
   document_root: Location of site's document root as specified in your webserver's configuration (this will be updated to point to the relevant distribution)
 
 
@@ -161,4 +161,4 @@ WARNINGS
 
 - Git updates using HEAD will result in the folder being used always being the same 'version'.  Release history for this asset will not be available. To enable release history then you need to specify a particular revision to pull from.
 
-- Source code for actual websites needs to be managed and deployed by another tool and is outside the scope of the dmu
+- Source code for actual websites needs to be managed and deployed by another tool and is outside the scope of the dpm

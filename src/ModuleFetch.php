@@ -14,7 +14,7 @@ use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader\Downloader;
 class ModuleFetch extends Application {
   //
 
-  const NAME = 'Drupal Module Fetch';
+  const NAME = 'Drupal Platform Manager';
   const VERSION = '0.3';
 
   private $pid_file = 'modulefetch.pid';
@@ -187,7 +187,7 @@ class ModuleFetch extends Application {
 
   public function saveAssetsDownloadState() {
     $current_state = $this->state_data;
-    $current_state['dmu_core_settings']['save_time'] = time();
+    $current_state['dpm_core_settings']['save_time'] = time();
 
     $this->getConfigObj()->save('state', $current_state);
   }
@@ -244,7 +244,7 @@ class ModuleFetch extends Application {
   }
 
   public function isInstalled() {
-    $state = $this->getState('dmu_core_settings', 'save_time');
+    $state = $this->getState('dpm_core_settings', 'save_time');
     return !empty($state);
   }
 }

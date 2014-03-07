@@ -37,7 +37,7 @@ $container['Dumper'] = function ($c) {
 $files = [
   'config' => '../data/config.yml',
   'sites' => '../data/sites.yml',
-  'state' => '../data/dmu.state'
+  'state' => '../data/dpm.state'
 ];
 $container['config_src'] = $files;
 $container['Config'] = function ($c) {

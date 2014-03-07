@@ -15,5 +15,4 @@ TODO
 - Update: Add option to use relative paths in symlinks
 - Update/Application: Move $asset_types variable up into the Application (getAssetTypes())
 - Install: add option to support rebuilding (and cleaning up) of directory structure after changes in config.yml
-- Rename to drupal-platform-manager (dpm)
 - Improve Readme.md file to better describe how things work, prerequisites etc.

@@ -1,5 +1,5 @@
 data/*.yml
-data/dmu.state
+data/dpm.state
 files/downloads
 files/releases
 vendor/

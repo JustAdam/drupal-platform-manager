@@ -1,9 +1,9 @@
 {
-  "name": "dbmedialab/drupal-module-update",
+  "name": "dbmedialab/drupal-platform-manager",
   "description": "",
   "keywords": ["drush", "drupal"],
   "license": "GPL3",
-  "version": "0.2",
+  "version": "0.3",
   "require": {
     "php": ">=5.4",
     "symfony/yaml": "2.5.*@dev",
@@ -19,6 +19,6 @@
     }
   },
   "bin": [
-    "bin/dmu"
+    "bin/dpm"
   ]
 }
