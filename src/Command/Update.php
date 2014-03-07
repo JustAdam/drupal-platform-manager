@@ -335,6 +335,22 @@ class Update extends ModuleFetch {
 
     $output->writeln("  at: <comment>$this->active_release_folder</comment>");
 
+    // Change document root location (webserver's configuration for the site) to point to this latest build
+    if (file_exists($release_dir  . '/latest')) {
+      foreach ($d_b_info['site_building'] as $site => $info) {
+        if (file_exists($info['document_root'])) {
+          // Document root already exists, so delete and recreate
+          $cmd = "rm \"{$info['document_root']}\" && ln -s \"$release_dir/latest\" \"{$info['document_root']}\"";
+          shell_exec($cmd);
+        } else {
+          // Document root doesn't exist, so create it
+          symlink($release_dir  . '/latest', $info['document_root']);
+        }
+
+        $output->writeln("  Updated document_root for <comment>$site</comment>");
+      }
+    }
+
     chdir($cwd->bottom());
   }
 }
