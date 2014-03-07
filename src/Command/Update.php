@@ -129,6 +129,9 @@ class Update extends ModuleFetch {
         } elseif ($data['method'] == 'get' && empty($data['url'])) {
           $output->writeln("  <error>$type: $name is missing required url</error>");
           continue;
+        } elseif ($data['method'] == 'symlink' && empty($data['url'])) {
+          $output->writeln("  <error>$type: $name is missing required url</error>");
+          continue;
         }
    
 

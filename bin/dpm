@@ -19,6 +19,7 @@ use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader\Downloader;
 use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader\Drush as DrushDownloader;
 use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader\Git as GitDownloader;
 use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader\Get as GetDownloader;
+use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader\Symlink as SymlinkDownloader;
 
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -52,6 +53,7 @@ $container['Downloader'] = function ($c) {
   $d->add(new DrushDownloader);
   $d->add(new GitDownloader);
   $d->add(new GetDownloader);
+  $d->add(new SymlinkDownloader);
   return $d;
 };
 $container['ModuleFetch'] = function($c) {
