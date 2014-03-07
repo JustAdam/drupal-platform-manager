@@ -15,7 +15,7 @@ class ModuleFetch extends Application {
   //
 
   const NAME = 'Drupal Platform Manager';
-  const VERSION = '0.3';
+  const VERSION = '0.4';
 
   private $pid_file = 'modulefetch.pid';
   private $base_directory;
