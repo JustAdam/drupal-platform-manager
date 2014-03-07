@@ -50,7 +50,7 @@ class Drush implements ModuleDownloaderInterface {
     $s_to = escapeshellarg($this->base_destination_dir);
 
     $command = "/usr/bin/env drush dl $s_module --destination=$s_to --no";
-    
+
     $descriptor = [
       1 => ["pipe", "w"],
       2 => ["pipe", "w"]
@@ -72,16 +72,20 @@ class Drush implements ModuleDownloaderInterface {
 
       switch ($return) {
         case 'success':
-          $this->download = $to;
 
           if (!empty($from['patches'])) {
             $this->applyPatches($from['patches']);  
           }
 
           // Rename directory from that drush uses to what was asked for.
-          rename($this->base_destination_dir . '/' . $this->asset_name_dir, $to);
+          if (rename($this->base_destination_dir . '/' . $this->asset_name_dir, $to)) {
+            $this->download = $to;
+            return TRUE;
+          }
 
-          return TRUE;
+          shell_exec("rm -rf $this->base_destination_dir . '/' . $this->asset_name_dir");
+
+          return FALSE;
         break;
         default:
           return FALSE;

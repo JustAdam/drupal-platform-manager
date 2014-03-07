@@ -35,6 +35,7 @@ class ModuleFetch extends Application {
    * Asset distribution data (all distributions)
    */
   protected $asset_data = [];
+
   /**
    * Current download state of all assets.
    */
@@ -78,6 +79,20 @@ class ModuleFetch extends Application {
       throw new \RuntimeException('Directory locations are not properly configured (require releases, downloada, modules->base).');
     }
 
+    $s_d_tmp = $this->config->load('sites');
+    if (empty($s_d_tmp) && !is_array($s_d_tmp)) {
+      throw new \RuntimeException('No site information found');
+    }
+    // Reorganise site data by distribution.  This will be later added to the asset data array.
+    $site_data = [];
+    foreach ($s_d_tmp as $name => $info) {
+      if (empty($info['distribution']) || empty($info['source']) || empty($info['document_root'])) {
+        throw new \RuntimeException("Site configuration for $name is missing required values.");
+      }
+      $site_data[$info['distribution']][$name] = $info;
+    }
+    unset($s_d_tmp);
+
     // Store location of base directory, so commands can move up and down the directory
     // structure without breaking core path name getters.
     $this->base_directory = realpath($directories['base']);
@@ -106,6 +121,7 @@ class ModuleFetch extends Application {
         throw new \RuntimeException("core settings are missing from distribution $name");
       }
       $this->asset_data[$name] = $assets;
+      $info['site_building'] = $site_data[$name];
       $this->asset_data[$name]['info'] = $info;
     }
   }

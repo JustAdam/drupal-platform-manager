@@ -1,12 +1,12 @@
 drupal-module-update
 ====================
 
-Drupal asset (modules/themes/libraries) manager and release builder.
+Drupal core and asset (modules/themes/libraries) manager and release builder.
 
 Features
 --------
 
-* Yaml configuration file
+* Yaml configuration files
 * Asset distributions (multisite configuration for different asset combinations)
 * Downloads only assets that have changed
 
@@ -32,6 +32,10 @@ Installation quick start
 	(update config.yml:distribution_info)
 
 	$ vim data/distribution-name.yml
+
+	$ cp data/sites.yml.default data/sites.yml
+
+	$ vim sites.yml
 
 	$ touch data/dmu.state
 
@@ -124,9 +128,21 @@ assets:
 	    adaptivetheme:
 	      version: 3.1
 
+sites.yml
+---------
+
+site-name.com: Domain name for the site
+  distribution: Distribution this site will be build into
+  source: Location to the source files for the site itself (this will be outside of the dmu and in a seperate repository)
+  document_root: Location of site's document root as specified in your webserver's configuration (this will be updated to point to the relevant distribution)
+
+
 All distributions will be built from the shared assets downloads folder, so an asset will only need to be downloaded once and it is available to all distributions.  Each distribution can run a difference version of a module, or the same version; one with a patch and one without.
 
 Distributions are stored in the releases folder, release/distribution-name/timestamp.  A symlink called latest will point to the latest version.
+
+Sites which are using this distribution will be symlinked from the sites folder to where their source files reside.
+The document root (used by the webserver) location for this site will then be changed to point to this distribution.
 
 Downloading an asset will create a unique directory based on the options passed to the download.
 This means an asset will have a different instance available for each time update is run and it has a different configuration.
@@ -144,3 +160,5 @@ WARNINGS
 - When using the get downloader method with archives, it assumes that the contents of the archive are held within a directory.  If they are not then things will go a little wrong ..
 
 - Git updates using HEAD will result in the folder being used always being the same 'version'.  Release history for this asset will not be available. To enable release history then you need to specify a particular revision to pull from.
+
+- Source code for actual websites needs to be managed and deployed by another tool and is outside the scope of the dmu

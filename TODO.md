@@ -1,9 +1,9 @@
 TODO
 ----
 
-- Add site building
+- Update: create new method "symlink".  Which will allow an asset to point to a file location on the server.
 - Global: Write unit tests
-- Make use Travis
+- Make use of Travis
 - Global: Core config options other than directories should be alterable via command line switches
 - Update: add --rebuild-asset=asset option to force redownloading of asset
 - Global: Wrap use of cwd SplStack into an directory moving wrapper
@@ -15,3 +15,5 @@ TODO
 - Update: Add option to use relative paths in symlinks
 - Update/Application: Move $asset_types variable up into the Application (getAssetTypes())
 - Install: add option to support rebuilding (and cleaning up) of directory structure after changes in config.yml
+- Rename to drupal-platform-manager (dpm)
+- Improve Readme.md file to better describe how things work, prerequisites etc.

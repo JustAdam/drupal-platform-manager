@@ -250,6 +250,11 @@ class Update extends ModuleFetch {
       }  
     }
 
+    // Add sites which are using this distro.
+    foreach ($d_b_info['site_building'] as $site => $info) {
+      symlink($info['source'], $site);
+    }
+
     mkdir('all');
     $cwd->push(getcwd());
     chdir('all');
@@ -324,11 +329,29 @@ class Update extends ModuleFetch {
 
     // Symlink to latest release folder
     if (file_exists($release_dir  . '/latest')) {
-      unlink($release_dir  . '/latest');
+      $cmd = "rm \"$release_dir/latest\" && ln -s \"$this->active_release_folder\" \"$release_dir/latest\"";
+      shell_exec($cmd);
+    } else {
+      symlink($this->active_release_folder, $release_dir  . '/latest');  
     }
-    symlink($this->active_release_folder, $release_dir  . '/latest');
 
     $output->writeln("  at: <comment>$this->active_release_folder</comment>");
+
+    // Change document root location (webserver's configuration for the site) to point to this latest build
+    if (file_exists($release_dir  . '/latest')) {
+      foreach ($d_b_info['site_building'] as $site => $info) {
+        if (file_exists($info['document_root'])) {
+          // Document root already exists, so delete and recreate
+          $cmd = "rm \"{$info['document_root']}\" && ln -s \"$release_dir/latest\" \"{$info['document_root']}\"";
+          shell_exec($cmd);
+        } else {
+          // Document root doesn't exist, so create it
+          symlink($release_dir  . '/latest', $info['document_root']);
+        }
+
+        $output->writeln("  Updated document_root for <comment>$site</comment>");
+      }
+    }
 
     chdir($cwd->bottom());
   }
