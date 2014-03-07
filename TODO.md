@@ -1,7 +1,6 @@
 TODO
 ----
 
-- Update: create new method "symlink".  Which will allow an asset to point to a file location on the server.
 - Global: Write unit tests
 - Make use of Travis
 - Global: Core config options other than directories should be alterable via command line switches
@@ -11,8 +10,8 @@ TODO
 - Downloader: Refactor GetDownload archive extraction and processing
 - General refactoring and reduction of dupe code!
 - Downloader: Fix GetDownloader archive extraction to test if the archive contents are archived within a directory or not.  If they are not our directory gets messy!
-- Downloader: implement patching of assets downloaded via GIT
+- GitDownloader: implement patching of assets downloaded via GIT
 - Update: Add option to use relative paths in symlinks
 - Update/Application: Move $asset_types variable up into the Application (getAssetTypes())
 - Install: add option to support rebuilding (and cleaning up) of directory structure after changes in config.yml
-- Improve Readme.md file to better describe how things work, prerequisites etc.
+- Improve README.md file to better describe how actually things work, prerequisites etc.
