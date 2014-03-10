@@ -130,10 +130,10 @@ assets:
 sites.yml
 ---------
 
-site-name.com: Domain name for the site
-  distribution: Distribution this site will be build into
-  source: Location to the source files for the site itself (this will be outside of the dpm and in a seperate repository)
-  document_root: Location of site's document root as specified in your webserver's configuration (this will be updated to point to the relevant distribution)
+	site-name.com: Domain name for the site
+  		distribution: Distribution this site will be build into
+  		source: Location to the source files for the site itself (this will be outside of the dpm and in a seperate repository)
+  		document_root: Location of site's document root as specified in your webserver's configuration (this will be updated to point to the relevant distribution)
 
 
 All distributions will be built from the shared assets downloads folder, so an asset will only need to be downloaded once and it is available to all distributions.  Each distribution can run a difference version of a module, or the same version; one with a patch and one without.
