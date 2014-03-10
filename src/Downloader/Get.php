@@ -83,7 +83,7 @@ class Get implements ModuleDownloaderInterface {
     switch ($type) {
       case 'application/zip':
         $command = "/usr/bin/env unzip $s_file -d $s_destination";
-        $regexp = "!creating: $destination/(.*?)/!";
+        $regexp = "!creating|inflating: $destination/(.*?)/!";
       break;
       case 'application/x-gzip':
         $command = "/usr/bin/env tar xvfz $s_file -C $s_destination";
