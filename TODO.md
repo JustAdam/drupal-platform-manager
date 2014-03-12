@@ -1,6 +1,7 @@
 TODO
 ----
 
+- Move distribution_info: outside of config.yml and into specific distro files. Instead provide a distribution_files: option (directory to where all files are stored)
 - Global: Write unit tests
 - Make use of Travis
 - Global: Core config options other than directories should be alterable via command line switches
