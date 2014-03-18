@@ -340,6 +340,8 @@ class Update extends ModuleFetch {
 
     $output->writeln("  at: <comment>$this->active_release_folder</comment>");
 
+    chdir($cwd->bottom());
+
     // Change document root location (webserver's configuration for the site) to point to this latest build
     if (file_exists($release_dir  . '/latest')) {
       foreach ($d_b_info['site_building'] as $site => $info) {
@@ -355,7 +357,5 @@ class Update extends ModuleFetch {
         $output->writeln("  Updated document_root for <comment>$site</comment>");
       }
     }
-
-    chdir($cwd->bottom());
   }
 }
