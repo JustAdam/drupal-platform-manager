@@ -1,10 +1,18 @@
 <phpunit colors="true">
   <testsuites>
-    <testsuite name="drupal-module-update-downloaders">
-      <directory suffix="Test.php" phpVersion="5.5" phpVersionOperator=">=">tests/Downloader/</directory>
+    <testsuite name="dpm-core">
+      <file>tests/ModuleFetchTest.php</file>
+    </testsuite>
+    <testsuite name="dpm-configuration">
+      <directory>tests/Config/</directory>
+      <file>ConfigTest.php</file>
+    </testsuite>
+    <testsuite name="dpm-downloaders">
+      <directory>tests/Downloader/</directory>
       <file>DrushTest.php</file>
       <file>GetTest.php</file>
       <file>GitTest.php</file>
+      <file>SymlinkTest.php</file>
     </testsuite>
   </testsuites>
 </phpunit>

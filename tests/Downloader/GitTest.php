@@ -2,6 +2,7 @@
 
 use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader\Git;
 
+
 class GitTest extends \PHPUnit_Framework_TestCase {
   
   public function testName() {
