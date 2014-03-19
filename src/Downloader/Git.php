@@ -14,6 +14,10 @@ class Git implements ModuleDownloaderInterface {
     return 'git';
   }
 
+  public function hasRequiredData(array $data) {
+    return !empty($data['url']);
+  }
+
   public function get($from, $to) {
 
     if (is_dir($to)) {

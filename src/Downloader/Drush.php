@@ -22,6 +22,10 @@ class Drush implements ModuleDownloaderInterface {
     return 'drush';
   }
 
+  public function hasRequiredData(array $data) {
+    return !empty($data['version']);
+  }
+
   public function get($from, $to) {
     //
     // Drush names the download directory as the module name, whereas we need to download it into

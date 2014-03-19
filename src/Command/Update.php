@@ -118,22 +118,11 @@ class Update extends ModuleFetch {
         // Populate data correctly.
         $data = $this->updateAssetDefaultData($type, $name, $data);
 
-        // Required value checks for particular download methods
-        // @todo move logic to the relevant downloader class. (->hasRequiredValues($from))
-        if ($data['method'] == 'drush' && empty($data['version'])) {
-          $output->writeln("  <error>$type: $name is missing required version</error>");
-          continue;
-        } elseif ($data['method'] == 'git' && empty($data['url'])) {
-          $output->writeln("  <error>$type: $name is missing required url</error>");
-          continue;
-        } elseif ($data['method'] == 'get' && empty($data['url'])) {
-          $output->writeln("  <error>$type: $name is missing required url</error>");
-          continue;
-        } elseif ($data['method'] == 'symlink' && empty($data['url'])) {
-          $output->writeln("  <error>$type: $name is missing required url</error>");
+        $downloader = $this->getDownloader($data['method']);
+        if (!$downloader->hasRequiredData($data)) {
+          $output->writeln("  <error>$type: $name ({$data['method']}) is missing required element</error>");
           continue;
         }
-   
 
         $current_state = $this->getState($type, $name);
         $new_state = $this->genStateHash($data);

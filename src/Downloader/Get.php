@@ -14,6 +14,10 @@ class Get implements ModuleDownloaderInterface {
     return 'get';
   }
 
+  public function hasRequiredData(array $data) {
+    return !empty($data['url']);
+  }
+
   public function get($from, $to) {
 
     //
