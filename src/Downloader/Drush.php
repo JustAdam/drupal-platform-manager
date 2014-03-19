@@ -22,6 +22,10 @@ class Drush implements ModuleDownloaderInterface {
     return 'drush';
   }
 
+  public function hasRequiredData(array $data) {
+    return !empty($data['version']);
+  }
+
   public function get($from, $to) {
     //
     // Drush names the download directory as the module name, whereas we need to download it into
@@ -108,7 +112,7 @@ class Drush implements ModuleDownloaderInterface {
         if (!$file) {
           throw new \Exception("Failed downloading patch $patch.");
         }
-        $filename = $dl_to . '/' . basename($patch);
+        $filename = $dl_to . '/' . sha1(basename($patch)) . '.patch';
         file_put_contents($filename, $file);
 
         //$patch = "patch -p1 --dry-run -s -d $dl_to < $filename";

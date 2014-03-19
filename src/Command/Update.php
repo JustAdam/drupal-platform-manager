@@ -118,27 +118,19 @@ class Update extends ModuleFetch {
         // Populate data correctly.
         $data = $this->updateAssetDefaultData($type, $name, $data);
 
-        // Required value checks for particular download methods
-        // @todo move logic to the relevant downloader class. (->hasRequiredValues($from))
-        if ($data['method'] == 'drush' && empty($data['version'])) {
-          $output->writeln("  <error>$type: $name is missing required version</error>");
-          continue;
-        } elseif ($data['method'] == 'git' && empty($data['url'])) {
-          $output->writeln("  <error>$type: $name is missing required url</error>");
-          continue;
-        } elseif ($data['method'] == 'get' && empty($data['url'])) {
-          $output->writeln("  <error>$type: $name is missing required url</error>");
-          continue;
-        } elseif ($data['method'] == 'symlink' && empty($data['url'])) {
-          $output->writeln("  <error>$type: $name is missing required url</error>");
+        $downloader = $this->getDownloader($data['method']);
+        if (!$downloader->hasRequiredData($data)) {
+          $output->writeln("  <error>$type: $name ({$data['method']}) is missing required element</error>");
           continue;
         }
-   
 
         $current_state = $this->getState($type, $name);
         $new_state = $this->genStateHash($data);
 
-        if (!$this->stateExists($new_state, $current_state)) {
+        // If download method is git and there is no revision, then we need to run a download so we can get the latest version
+        // from the repository. stateExists will always return true as there are no changed variables which is used to generate 
+        // the asset hash.
+        if (!$this->stateExists($new_state, $current_state) || ($data['method'] == "git" && empty($data['revision']))) {
           // Temp variable to pass to generate download location.
           // $data is later passed to genStateHash() which doesn't use the hash variable
           $loc_info = $data;
@@ -330,6 +322,8 @@ class Update extends ModuleFetch {
       }
     }
 
+    chdir($cwd->bottom());
+
     // Symlink to latest release folder
     if (file_exists($release_dir  . '/latest')) {
       $cmd = "rm \"$release_dir/latest\" && ln -s \"$this->active_release_folder\" \"$release_dir/latest\"";
@@ -340,7 +334,6 @@ class Update extends ModuleFetch {
 
     $output->writeln("  at: <comment>$this->active_release_folder</comment>");
 
-    chdir($cwd->bottom());
 
     // Change document root location (webserver's configuration for the site) to point to this latest build
     if (file_exists($release_dir  . '/latest')) {

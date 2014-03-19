@@ -15,6 +15,10 @@ class Symlink implements ModuleDownloaderInterface {
     return 'symlink';
   }
 
+  public function hasRequiredData(array $data) {
+    return !empty($data['url']);
+  }
+
   public function get($from, $to) {
 
     // If source directory already exists, then this asset (we assume) has already been downloaded.

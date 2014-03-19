@@ -9,6 +9,13 @@ interface ModuleDownloaderInterface {
    */
   function getName();
   /**
+   * Return whether the asset array has all the required data to carry
+   * out a sucessful download.
+   * @param asset data array
+   * @return boolean
+   */
+  function hasRequiredData(array $data);
+  /**
    * Fetch asset from a resource.
    * @param from 
    * @param string Directory to download into.

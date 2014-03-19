@@ -14,11 +14,22 @@ class Git implements ModuleDownloaderInterface {
     return 'git';
   }
 
+  public function hasRequiredData(array $data) {
+    return !empty($data['url']);
+  }
+
   public function get($from, $to) {
 
-    //
-    // If source directory already exists, then this asset (we assume) has already been downloaded.
     if (is_dir($to)) {
+      // If revision is missing, then we need to fetch the latest version of the repository
+      if (empty($from['revision'])) {
+        $cwd = getcwd();
+        chdir($to);
+        shell_exec("/usr/bin/env git pull 2>&1");
+        chdir($cwd);
+        return TRUE;
+      }
+      // Otherwise we assume this asset is already downloaded.
       return NULL;
     }
 
@@ -84,14 +95,49 @@ class Git implements ModuleDownloaderInterface {
         }
       }
 
+      if (!empty($from['patches'])) {
+        $this->applyPatches($from['patches']);
+      }
+
       return TRUE;
     }
     throw new \Exception('Failed creating git process.');
   }
 
   public function applyPatches(array $patches) {
-    echo 'To be implemeted ...', PHP_EOL;
-    print_r($patches);
+
+    $context = stream_context_create(['http' => ['method' => 'GET', "user_agent" => 'dpm patch downloaer']]);
+
+    try {
+      foreach ($patches as $patch) {
+
+        // download patch
+        $file = file_get_contents($patch, FALSE, $context);
+        if (!$file) {
+          throw new \Exception("Failed downloading patch $patch.");
+        }
+        $filename = $this->destination . '/' . sha1(basename($patch)) . '.patch';
+        file_put_contents($filename, $file);
+
+        //$patch = "patch -p1 --dry-run -s -d $dl_to < $filename";
+        $patch = "patch %s %s -s -d %s < %s";
+        $test_patch = popen(sprintf($patch, '-p1', '--dry-run', $this->destination, $filename), 'r');
+        // If we get output then something has gone wrong
+        if (fgets($test_patch)) {
+          pclose($test_patch);
+          throw new \Exception("Patching of $filename failed.");
+        }
+        pclose($test_patch);
+
+        shell_exec(sprintf($patch, '-p1', '', $this->destination, $filename));
+      }
+    }
+    catch (\Exception $e) {
+      // Remove download directory on error, so after error fixing
+      // the next update can go smoothly
+      shell_exec("rm -rf $this->destination");
+      throw $e;
+    }
   }
 
   public function getDownload() {
