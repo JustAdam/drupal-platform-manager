@@ -3,7 +3,7 @@
   "description": "",
   "keywords": ["drush", "drupal"],
   "license": "GPL3",
-  "version": "0.4",
+  "version": "0.5",
   "require": {
     "php": ">=5.4",
     "symfony/yaml": "2.5.*@dev",
