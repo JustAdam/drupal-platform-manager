@@ -16,9 +16,16 @@ class Git implements ModuleDownloaderInterface {
 
   public function get($from, $to) {
 
-    //
-    // If source directory already exists, then this asset (we assume) has already been downloaded.
     if (is_dir($to)) {
+      // If revision is missing, then we need to fetch the latest version of the repository
+      if (empty($from['revision'])) {
+        $cwd = getcwd();
+        chdir($to);
+        shell_exec("/usr/bin/env git pull 2>&1");
+        chdir($cwd);
+        return TRUE;
+      }
+      // Otherwise we assume this asset is already downloaded.
       return NULL;
     }
 
