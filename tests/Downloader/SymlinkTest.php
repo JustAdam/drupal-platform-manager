@@ -9,4 +9,10 @@ class SymlinkTest extends \PHPUnit_Framework_TestCase {
     $downloader = new Symlink;
     $this->assertEquals('symlink', $downloader->getName());
   }
+
+  public function testRequiredData() {
+    $downloader = new Symlink;
+    $data = ['url' => 'whatever'];
+    $this->assertTrue($downloader->hasRequiredData($data));
+  }
 }

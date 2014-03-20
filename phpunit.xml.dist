@@ -1,8 +1,5 @@
 <phpunit colors="true">
   <testsuites>
-    <testsuite name="dpm-core">
-      <file>tests/ModuleFetchTest.php</file>
-    </testsuite>
     <testsuite name="dpm-configuration">
       <directory>tests/Config/</directory>
       <file>ConfigTest.php</file>

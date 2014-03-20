@@ -9,4 +9,10 @@ class DrushTest extends \PHPUnit_Framework_TestCase {
     $downloader = new Drush;
     $this->assertEquals('drush', $downloader->getName());
   }
+
+  public function testRequiredData() {
+    $downloader = new Drush;
+    $data = ['version' => '1.0'];
+    $this->assertTrue($downloader->hasRequiredData($data));
+  }
 }

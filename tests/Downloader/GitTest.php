@@ -9,4 +9,10 @@ class GitTest extends \PHPUnit_Framework_TestCase {
     $downloader = new Git;
     $this->assertEquals('git', $downloader->getName());
   }
+
+  public function testRequiredData() {
+    $downloader = new Git;
+    $data = ['url' => 'whatever'];
+    $this->assertTrue($downloader->hasRequiredData($data));
+  }
 }
