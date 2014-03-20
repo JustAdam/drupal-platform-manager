@@ -88,10 +88,12 @@ class Get implements ModuleDownloaderInterface {
       case 'application/zip':
         $command = "/usr/bin/env unzip $s_file -d $s_destination";
         $regexp = "!(creating|inflating): $destination/(.*?)/!";
+        $match_index = 2;
       break;
       case 'application/x-gzip':
         $command = "/usr/bin/env tar xvfz $s_file -C $s_destination";
         $regexp = "!^(.*?)/!";
+        $match_index = 1;
       break;
       default:
         echo "Mime type $type not found", PHP_EOL;
@@ -108,8 +110,8 @@ class Get implements ModuleDownloaderInterface {
       // Try to find possible output directory
       preg_match($regexp, $output, $matches);
 
-      if (!empty($matches[2]) && is_dir($destination . '/' . $matches[2])) {
-        rename($destination . '/' . $matches[2], $this->destination);
+      if (!empty($matches[$match_index]) && is_dir($destination . '/' . $matches[$match_index])) {
+        rename($destination . '/' . $matches[$match_index], $this->destination);
       } else {
         throw new \Exception("Unable to find extraction directory.");
       }
