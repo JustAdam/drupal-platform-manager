@@ -16,7 +16,7 @@ class Config implements ConfigInterface {
    * Data sources.
    * @type array
    */
-  protected $data = array();
+  protected $data = [];
 
 
   public function __construct(Parser $parser, Dumper $dumper) {
@@ -31,6 +31,10 @@ class Config implements ConfigInterface {
 
   public function load($file) {
 
+    if (empty($this->data[$file])) {
+      throw new \InvalidArgumentException('Config file for ' . $file .  ' does not exist.');
+    }
+
     if (!file_exists($this->data[$file])) {
       throw new \InvalidArgumentException('Config file does not exist: ' . $this->data[$file]);
     }
@@ -40,12 +44,16 @@ class Config implements ConfigInterface {
 
   public function save($file, $data) {
 
+    if (empty($this->data[$file])) {
+      throw new \InvalidArgumentException('Config file for ' . $file .  ' does not exist.');
+    }
+
     if (!file_exists($this->data[$file])) {
       throw new \InvalidArgumentException('Config file does not exist: ' . $this->data[$file]);
     }
 
     if (!is_writable($this->data[$file])) {
-       throw new \RuntimeException('Base directory ' . $directories['base'] . ' is not writable.');
+       throw new \RuntimeException('File ' . $this->data[$file] . ' is not writable.');
     }
 
     $content = $this->dumper->dump($data);

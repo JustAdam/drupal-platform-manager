@@ -1,0 +1,15 @@
+<phpunit colors="true">
+  <testsuites>
+    <testsuite name="dpm-configuration">
+      <directory>tests/Config/</directory>
+      <file>ConfigTest.php</file>
+    </testsuite>
+    <testsuite name="dpm-downloaders">
+      <directory>tests/Downloader/</directory>
+      <file>DrushTest.php</file>
+      <file>GetTest.php</file>
+      <file>GitTest.php</file>
+      <file>SymlinkTest.php</file>
+    </testsuite>
+  </testsuites>
+</phpunit>
