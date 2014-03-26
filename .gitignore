@@ -4,3 +4,4 @@ files/downloads
 files/releases
 vendor/
 composer.lock
+build/

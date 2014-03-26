@@ -1,0 +1,17 @@
+language: php
+php:
+  - 5.5
+  - 5.4
+
+before_script:
+  - sudo apt-get update -qq
+  - sudo apt-get install -y drush
+  - curl -sS http://getcomposer.org/installer | php
+  - php composer.phar install --no-interaction
+
+script:
+  - mkdir -p build/logs
+  - php vendor/bin/phpunit -c phpunit.xml.dist
+
+after_script:
+  - php vendor/bin/coveralls
