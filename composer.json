@@ -1,6 +1,6 @@
 {
   "name": "dbmedialab/drupal-platform-manager",
-  "description": "",
+  "description": "Faster Drupal site deployment and management (core & asset downloading)",
   "keywords": ["drush", "drupal"],
   "license": "GPL3",
   "version": "0.5",
