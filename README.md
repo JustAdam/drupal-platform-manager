@@ -1,6 +1,8 @@
 drupal-platform-manager
 =======================
 
+[![Build Status](https://travis-ci.org/dbmedialab/drupal-platform-manager.svg?branch=master)](https://travis-ci.org/dbmedialab/drupal-platform-manager) [![Coverage Status](https://coveralls.io/repos/dbmedialab/drupal-platform-manager/badge.png?branch=master)](https://coveralls.io/r/dbmedialab/drupal-platform-manager?branch=master)
+
 Drupal core and asset (modules/themes/libraries) manager and release builder.
 
 Features
