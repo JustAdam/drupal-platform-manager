@@ -90,19 +90,19 @@ config.yml
 
 distribution-name.yml
 ---------------------
-core:
-	version: Version of Drupal to use
-	patches:
-		- list of patches by URL
-assets:
-	asset_type:  modules, libraries or themes
-		asset_name: 
-			method: Download method, defaults to drush if not specified (drush, git, get or symlink)
-			version: Version of asset to get, required by drush method
-			patches:
-				- list of patches by URL
-			revision: used by git, defaults to HEAD (recommended to not use HEAD - see Warnings)
-			url: URL of asset, required by git, get, symlink
+	core:
+		version: Version of Drupal to use
+		patches:
+			- list of patches by URL
+	assets:
+		asset_type:  modules, libraries or themes
+			asset_name: 
+				method: Download method, defaults to drush if not specified (drush, git, get or symlink)
+				version: Version of asset to get, required by drush method
+				patches:
+					- list of patches by URL
+				revision: used by git, defaults to HEAD (recommended to not use HEAD - see Warnings)
+				url: URL of asset, required by git, get, symlink
 
 **Example:**
 
