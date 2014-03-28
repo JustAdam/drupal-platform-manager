@@ -151,8 +151,9 @@ class Update extends ModuleFetch {
       $progress->start($output, count($to_download));
       $progress->display();
 
-      $errors = array();
-      $success[$type] = array();
+      $errors = [];
+      $success = [];
+      $success[$type] = [];
       foreach ($to_download as $name => $data) {
         //
         $downloader = $this->getDownloader($data['from']['method']);

@@ -71,8 +71,12 @@ class Drush implements ModuleDownloaderInterface {
 
       proc_close($cmd);
 
-      $return = array_shift($matches);
-      $return = strtolower($return);
+      if (is_array($matches)) {
+        $return = array_shift($matches);
+        $return = strtolower($return);
+      } else {
+        $return = 'not found';
+      }
 
       switch ($return) {
         case 'success':
