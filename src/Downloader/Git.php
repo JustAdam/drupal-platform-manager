@@ -55,7 +55,7 @@ class Git implements ModuleDownloaderInterface {
         fclose($pipes[$pipe]);
       }
 
-      $cmd_return = proc_close($cmd);
+      proc_close($cmd);
 
       if (strpos($error, 'fatal:')) {
         return FALSE;
@@ -82,7 +82,7 @@ class Git implements ModuleDownloaderInterface {
             fclose($pipes[$pipe]);
           }
 
-          $cmd_return = proc_close($cmd);
+          proc_close($cmd);
 
           chdir($cwd->pop());
 
