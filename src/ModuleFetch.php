@@ -3,10 +3,6 @@
 namespace Dbmedialab\Drupal\Deploy\Modulefetch;
 
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Input\InputDefinition;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Dbmedialab\Drupal\Deploy\Modulefetch\Config\ConfigInterface;
 use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader\Downloader;
 
@@ -143,6 +139,9 @@ class ModuleFetch extends Application {
     return $this->downloader->get($downloader);
   }
 
+  /**
+   * @param string $var
+   */
   public function getConfig($var) {
     return $this->config_data['core'][$var];
   }
@@ -151,6 +150,10 @@ class ModuleFetch extends Application {
     return $this->asset_data[$distribution][$type];
   }
 
+  /**
+   * @param string $type
+   * @param string $name
+   */
   public function getState($type, $name) {
     return isset($this->state_data[$type][$name]) ? $this->state_data[$type][$name] : NULL;
   }

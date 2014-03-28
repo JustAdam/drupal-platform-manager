@@ -15,7 +15,9 @@ interface ConfigInterface {
    * Save data to file.
    *
    * @param String file location
+   * @param string $file
    * @param mixed data to save
+   * @return void
    */
   public function save($file, $data);
 
@@ -24,6 +26,7 @@ interface ConfigInterface {
    *
    * @param string Name of source
    * @param string File location
+   * @return void
    */
   public function addDataSource($name, $file_location);
 }
