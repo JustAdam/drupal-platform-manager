@@ -3,10 +3,6 @@
 namespace Dbmedialab\Drupal\Deploy\Modulefetch;
 
 use Symfony\Component\Console\Application;
-use Symfony\Component\Console\Input\InputDefinition;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Dbmedialab\Drupal\Deploy\Modulefetch\Config\ConfigInterface;
 use Dbmedialab\Drupal\Deploy\Modulefetch\Downloader\Downloader;
 
@@ -51,6 +47,21 @@ class ModuleFetch extends Application {
 
 
   public function __construct(ConfigInterface $config, Downloader $downloader) {
+    // Lock file - only one instance of the app to run at a time.
+    $this->writePIDFile();
+
+    parent::__construct(self::NAME, self::VERSION);
+
+    // Load core configuration data
+    $this->loadConfigData($config);
+    // Load all site and distrubution data
+    $this->loadDistributionData();
+
+    // Set available downloaders
+    $this->downloader = $downloader;
+  }
+
+  private function writePIDFile() {
     // How is this going to work in practise on a multiuser (and one install) system 
     // with users installing into different directories ....
     $this->pid_file = getcwd() . '/' . $this->pid_file;
@@ -58,16 +69,16 @@ class ModuleFetch extends Application {
       throw new \RuntimeException('pid file for application still exists.  Perhaps I am already running, or didn\'t shutdownn correctly last time');
     }
     file_put_contents($this->pid_file, getmypid());
+  }
 
-    parent::__construct(self::NAME, self::VERSION);
-
-
+  /**
+   * @see getConfig()
+   */
+  private function loadConfigData(ConfigInterface $config) {
     $this->config = $config;
     $this->config_data = $this->config->load('config');
     $this->state_data = $this->config->load('state');
 
-    $this->downloader = $downloader;
-    
     $directories = $this->getConfig('directories');
 
     // Check for core items required from the config file.
@@ -79,6 +90,16 @@ class ModuleFetch extends Application {
       throw new \RuntimeException('Directory locations are not properly configured (require releases, downloada, modules->base).');
     }
 
+    // Store location of base directory, so commands can move up and down the directory
+    // structure without breaking core path name getters.
+    $this->base_directory = realpath($directories['base']);
+  }
+
+  /**
+   * @see getAssets()
+   */
+  private function loadDistributionData() {
+    // Load site info
     $s_d_tmp = $this->config->load('sites');
     if (empty($s_d_tmp) && !is_array($s_d_tmp)) {
       throw new \RuntimeException('No site information found');
@@ -92,10 +113,6 @@ class ModuleFetch extends Application {
       $site_data[$info['distribution']][$name] = $info;
     }
     unset($s_d_tmp);
-
-    // Store location of base directory, so commands can move up and down the directory
-    // structure without breaking core path name getters.
-    $this->base_directory = realpath($directories['base']);
 
     // Load asset info
     $asset_info = $this->getConfig('distribution_info');
@@ -143,6 +160,9 @@ class ModuleFetch extends Application {
     return $this->downloader->get($downloader);
   }
 
+  /**
+   * @param string $var
+   */
   public function getConfig($var) {
     return $this->config_data['core'][$var];
   }
@@ -151,6 +171,10 @@ class ModuleFetch extends Application {
     return $this->asset_data[$distribution][$type];
   }
 
+  /**
+   * @param string $type
+   * @param string $name
+   */
   public function getState($type, $name) {
     return isset($this->state_data[$type][$name]) ? $this->state_data[$type][$name] : NULL;
   }

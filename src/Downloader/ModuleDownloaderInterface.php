@@ -33,6 +33,7 @@ interface ModuleDownloaderInterface {
   /**
    * List of patches to apply to the download.
    * @param array
+   * @return void
    */
   function applyPatches(array $patches);
 }

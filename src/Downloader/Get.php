@@ -51,7 +51,7 @@ class Get implements ModuleDownloaderInterface {
         fclose($pipes[$pipe]);
       }
 
-      $cmd_return = proc_close($cmd);
+      proc_close($cmd);
 
       if ($success > 1) {
 

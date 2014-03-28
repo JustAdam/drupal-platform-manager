@@ -3,13 +3,15 @@
 namespace Dbmedialab\Drupal\Deploy\Modulefetch\Command;
 
 use Dbmedialab\Drupal\Deploy\Modulefetch\Command\ModuleFetch;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
  
-
+/**
+ * @method boolean isInstalled()
+ * @method array getConfig(string name)
+ * @method Command find(string name)
+ */
 class Install extends ModuleFetch {
   //
 

@@ -69,10 +69,14 @@ class Drush implements ModuleDownloaderInterface {
         fclose($pipes[$pipe]);
       }
 
-      $cmd_return = proc_close($cmd);
+      proc_close($cmd);
 
-      $return = array_shift($matches);
-      $return = strtolower($return);
+      if (is_array($matches)) {
+        $return = array_shift($matches);
+        $return = strtolower($return);
+      } else {
+        $return = 'not found';
+      }
 
       switch ($return) {
         case 'success':

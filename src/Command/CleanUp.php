@@ -4,12 +4,17 @@ namespace Dbmedialab\Drupal\Deploy\Modulefetch\Command;
 
 use Dbmedialab\Drupal\Deploy\Modulefetch\Command\ModuleFetch;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
+/**
+ * @method string getReleaseDirectory()
+ * @method array getConfig(string name)
+ * @method string getBaseDownloadDirectory()
+ * @method void removeState(string type, string name, string state_hash)
+ * @method void saveAssetsDownloadState()
+ */
 class CleanUp extends ModuleFetch {
 
   /**
