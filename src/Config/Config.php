@@ -31,26 +31,14 @@ class Config implements ConfigInterface {
 
   public function load($file) {
 
-    if (empty($this->data[$file])) {
-      throw new \InvalidArgumentException('Config file for ' . $file .  ' does not exist.');
-    }
-
-    if (!file_exists($this->data[$file])) {
-      throw new \InvalidArgumentException('Config file does not exist: ' . $this->data[$file]);
-    }
+    $this->fileExists($file);
 
     return $this->parser->parse(file_get_contents($this->data[$file]));
   }
 
   public function save($file, $data) {
 
-    if (empty($this->data[$file])) {
-      throw new \InvalidArgumentException('Config file for ' . $file .  ' does not exist.');
-    }
-
-    if (!file_exists($this->data[$file])) {
-      throw new \InvalidArgumentException('Config file does not exist: ' . $this->data[$file]);
-    }
+    $this->fileExists($file);
 
     if (!is_writable($this->data[$file])) {
        throw new \RuntimeException('File ' . $this->data[$file] . ' is not writable.');
@@ -58,5 +46,15 @@ class Config implements ConfigInterface {
 
     $content = $this->dumper->dump($data);
     file_put_contents($this->data[$file], $content, LOCK_EX);
+  }
+
+  protected function fileExists($file) {
+    if (empty($this->data[$file])) {
+      throw new \InvalidArgumentException('Config file for ' . $file .  ' does not exist.');
+    }
+
+    if (!file_exists($this->data[$file])) {
+      throw new \InvalidArgumentException('Config file does not exist: ' . $this->data[$file]);
+    }
   }
 }
