@@ -9,7 +9,19 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-
+/**
+ * @method array getDistributions()
+ * @method array getAssets(string type, string name)
+ * @method array getConfig(string name)
+ * @method ModuleDownloaderInterface getDownloader(string name)
+ * @method void updateState(string type, string name, array asset_data)
+ * @method string genStateHash(array asset_data)
+ * @method boolean stateExists(string state, array current_state)
+ * @method string getDownloadToLocation(array asset_data)
+ * @method void saveAssetsDownloadState()
+ * @method string getReleaseDirectory()
+ * @method array getAssetDirectory(string asset_type)
+ */
 class Update extends ModuleFetch {
 
   protected $active_release_folder;

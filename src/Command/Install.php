@@ -9,7 +9,11 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
  
-
+/**
+ * @method boolean isInstalled()
+ * @method array getConfig(string name)
+ * @method Command find(string name)
+ */
 class Install extends ModuleFetch {
   //
 
