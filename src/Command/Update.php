@@ -17,6 +17,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @method void updateState(string type, string name, array asset_data)
  * @method string genStateHash(array asset_data)
  * @method boolean stateExists(string state, array current_state)
+ * @method array getState(string type, string name)
  * @method string getDownloadToLocation(array asset_data)
  * @method void saveAssetsDownloadState()
  * @method string getReleaseDirectory()
