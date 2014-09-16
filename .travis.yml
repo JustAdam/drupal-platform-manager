@@ -17,5 +17,5 @@ after_script:
   - php vendor/bin/coveralls
 
 notifications:
-  email:
-    - dev@aller.no
+  slack:
+    secure: "Xu9c/a8d98tH0OFuxK/YBR+9lb0Wo8fY/hrDOVb4D6p/lYRaiO6UC2t+FUedoark36zOl9YnWWrt1Ik5mHjlWq2NW0McSeyOvQYmIYA8vx3658uqrvXlgKBpBXXJC3pnj/LGrWSVvdNi9pcCQo3fblc4PLNDlHcQHfaIyVZDfhA="
